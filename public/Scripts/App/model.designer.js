@@ -504,12 +504,6 @@ function openProgrammingPopup() {
     programmingDialog.dialog('open');
 }
 
-function openNetDesigner() {
-    var currentLocation = location.href;
-    var newLocation = currentLocation.replace('ModelDesigner.html', 'NetDesigner.html');
-    location.href = newLocation;
-}
-
 function addMoreSimilarObjects(objectId, number) {
     net = null;
     var initialObject = currentModel.objects.filter(function (item) {
@@ -641,8 +635,6 @@ $(document).ready(function () {
     $('#programmingBtn').on('click', openProgrammingPopup);
 
     $('#runBtn').on('click', runModelSimulation);
-
-    $('#netDesignerMenuItem').on('click', openNetDesigner);
 
     var $focusedElement;
     $(document).on('modelEdited', function () {

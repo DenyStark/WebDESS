@@ -15,11 +15,11 @@ app.get('/version', (_req, res) => {
   res.json({ version });
 });
 
-app.use('/', (_req, res) => {
-  res.render('index');
+app.get('/', (_req, res) => {
+  res.render('index', {});
 });
-app.use('/mobile', (_req, res) => {
-  res.render('mobile');
+app.get('/mobile', (_req, res) => {
+  res.render('mobile', {});
 });
 
 module.exports = app;

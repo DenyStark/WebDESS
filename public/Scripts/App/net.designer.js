@@ -495,12 +495,6 @@ function openProgrammingPopup() {
     programmingDialog.dialog('open');
 }
 
-function openModelDesigner() {
-    var currentLocation = location.href;
-    var newLocation = currentLocation.replace('NetDesigner.html', 'ModelDesigner.html');
-    location.href = newLocation;
-}
-
 function openAnimationSettings() {
     animationSettingsDialog.dialog('open');
 }
@@ -552,8 +546,6 @@ $(document).ready(function () {
     $('#stopBtn').on('click', requestStop);
 
     $('#animationSettingsBtn').on('click', openAnimationSettings);
-
-    $('#modelDesignerMenuItem').on('click', openModelDesigner);
 
     var $focusedElement;
     $(document).on('netEdited', cleanBuffers);
