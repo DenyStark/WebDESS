@@ -1,4 +1,5 @@
 const { NODE_URL, NODE_PORT } = process.env;
+require('module-alias/register');
 
 const http = require('http');
 
