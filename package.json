@@ -1,0 +1,22 @@
+{
+  "name": "webdess",
+  "version": "0.1.0",
+  "description": "Petri chart modeling tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "pm2 start process.yml",
+    "stop": "pm2 stop process.yml",
+    "restart": "pm2 restart process.yml",
+    "logs": "pm2 logs --out",
+    "errors": "pm2 logs --err",
+    "eslint": "eslint --fix ."
+  },
+  "repository": "https://github.com/DenyStark/WebDESS.git",
+  "author": "DenyStark <denyskrolevetskyi@gmail.com>",
+  "license": "Apatche-2.0",
+  "dependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.5.1",
+    "express": "^4.17.1"
+  }
+}

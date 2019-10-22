@@ -1,3 +1,12 @@
+# Mac files
+.DS_Store
+.idea
+
+# Configs
+process.json
+process.yml
+db/database.json
+
 # Logs
 logs
 *.log
