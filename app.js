@@ -16,10 +16,10 @@ app.get('/version', (_req, res) => {
 });
 
 app.use('/', (_req, res) => {
-  res.render('NetDesigner');
+  res.render('index');
 });
 app.use('/mobile', (_req, res) => {
-  res.render('ModelDesigner');
+  res.render('mobile');
 });
 
 module.exports = app;
