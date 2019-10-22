@@ -277,7 +277,10 @@ function saveCurrentPetriNet() {
         return value;
     });
     localStorage.setItem('net' + netCopy.id, jsonNet);
-    alert('The net has been saved.');
+
+    $.post('files/save', { title: netName, data: jsonNet }, () => {
+        alert('The net has been saved.');
+    });
 }
 
 function runNetModelSimulation() {

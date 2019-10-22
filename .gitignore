@@ -7,6 +7,9 @@ process.json
 process.yml
 db/database.json
 
+# Data
+files/
+
 # Logs
 logs
 *.log
