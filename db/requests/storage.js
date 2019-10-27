@@ -4,6 +4,11 @@ module.exports = {
       VALUES ($title, $path)
       RETURNING "item_id" AS "id";`,
 
+  'update': `
+      UPDATE "storage"
+      SET "date" = NOW()
+      WHERE "item_id" = $id;`,
+
   'get': `
       SELECT "title", "path", "date"
       FROM "storage"

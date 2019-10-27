@@ -13,4 +13,7 @@ router.route('/load')
 router.route('/save')
   .post(validate('file', false), controller.save);
 
+router.route('/update')
+  .post(validate('update', false), controller.update);
+
 module.exports = router;

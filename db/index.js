@@ -27,6 +27,7 @@ const request = template => params => {
 module.exports = {
   storage: {
     add: getId(request(storage['add'])),
+    update: request(storage['update']),
     get: getRow(request(storage['get'])),
     getAll: getAll(request(storage['get-all'])),
   },

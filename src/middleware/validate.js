@@ -16,6 +16,10 @@ const schemas = {
     title: templates.title.required(),
     data: templates.string.required(),
   }),
+  update: Joi.object().keys({
+    id: templates.id.required(),
+    data: templates.string.required(),
+  }),
 };
 
 const validate = (type, isQuery = true) => (req, res, next) => {

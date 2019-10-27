@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const db = require('@db');
-const { successRes } = require('@utils/res-builder');
+const { successRes, errorRes } = require('@utils/res-builder');
 
 const folder = 'src/files';
 
@@ -15,6 +15,7 @@ const getList = async(_req, res) => {
 const load = async(req, res) => {
   const { id } = req.query;
   const item = await db.storage.get({ id });
+  if (!item.path) return errorRes(res, 422, 73400);
 
   item.data = fs.readFileSync(item.path, 'UTF8');
   delete item.path;
@@ -32,8 +33,20 @@ const save = async(req, res) => {
   successRes(res);
 };
 
+const update = async(req, res) => {
+  const { id, data } = req.body;
+  const item = await db.storage.get({ id });
+  if (!item.path) return errorRes(res, 422, 73400);
+
+  fs.writeFileSync(item.path, data);
+  await db.storage.update({ id });
+
+  successRes(res);
+};
+
 module.exports = {
   getList,
   load,
   save,
+  update,
 };
