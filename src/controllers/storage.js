@@ -12,6 +12,16 @@ const getList = async(_req, res) => {
   successRes(res, { list });
 };
 
+const load = async(req, res) => {
+  const { id } = req.query;
+  const item = await db.storage.get({ id });
+
+  item.data = fs.readFileSync(item.path, 'UTF8');
+  delete item.path;
+
+  successRes(res, { item });
+};
+
 const save = async(req, res) => {
   const { data, title } = req.body;
   const path = `${folder}/${randomIndex()}.json`;
@@ -24,5 +34,6 @@ const save = async(req, res) => {
 
 module.exports = {
   getList,
+  load,
   save,
 };
