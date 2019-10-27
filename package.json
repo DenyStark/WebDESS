@@ -12,6 +12,7 @@
     "eslint": "eslint --fix ."
   },
   "_moduleAliases": {
+    "@db": "db",
     "@controllers": "src/controllers",
     "@middleware": "src/middleware",
     "@routes": "src/routes",
@@ -27,6 +28,7 @@
     "ejs": "^2.7.1",
     "eslint": "^6.5.1",
     "express": "^4.17.1",
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "pg": "^7.12.1"
   }
 }
