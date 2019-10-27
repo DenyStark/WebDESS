@@ -7,6 +7,11 @@ const folder = 'src/files';
 
 const randomIndex = () => (Math.random() * 1e18).toString(16);
 
+const getList = async(_req, res) => {
+  const list = await db.storage.getAll();
+  successRes(res, { list });
+};
+
 const save = async(req, res) => {
   const { data, title } = req.body;
   const path = `${folder}/${randomIndex()}.json`;
@@ -18,5 +23,6 @@ const save = async(req, res) => {
 };
 
 module.exports = {
+  getList,
   save,
 };

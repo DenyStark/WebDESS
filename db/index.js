@@ -2,7 +2,7 @@ const { PG_HOST, PG_USER, PG_PORT, PG_PASS, PG_DB } = process.env;
 
 const PgClient = require('pg').Client;
 
-const { getId, fillTemplate } = require('./tools');
+const { getId, getAll, fillTemplate } = require('./tools');
 
 const storage = require('./requests/storage');
 
@@ -27,5 +27,6 @@ const request = template => params => {
 module.exports = {
   storage: {
     add: getId(request(storage['add'])),
+    getAll: getAll(request(storage['get-all'])),
   },
 };
