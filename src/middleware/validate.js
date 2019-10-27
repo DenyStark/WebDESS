@@ -3,13 +3,21 @@ const Joi = require('@hapi/joi');
 const { errorRes } = require('@utils/res-builder');
 
 const templates = {
-  title: Joi.string().max(75),
+  id: Joi.number().integer().min(0),
+  title: Joi.string().max(50),
   string: Joi.string(),
 };
 
 const schemas = {
+  id: Joi.object().keys({
+    id: templates.id.required(),
+  }),
   file: Joi.object().keys({
     title: templates.title.required(),
+    data: templates.string.required(),
+  }),
+  update: Joi.object().keys({
+    id: templates.id.required(),
     data: templates.string.required(),
   }),
 };

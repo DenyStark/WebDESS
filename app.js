@@ -3,7 +3,7 @@ const { version } = process.env;
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const files = require('@routes/files');
+const storage = require('@routes/storage');
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.get('/version', (_req, res) => {
   res.json({ version });
 });
 
-app.use('/files', files);
+app.use('/storage', storage);
 
 app.get('/', (_req, res) => {
   res.render('index', {});
