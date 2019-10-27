@@ -1,7 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 
-const controller = require('@controllers/files');
+const controller = require('@controllers/storage');
 const validate = require('@middleware/validate');
 
 router.route('/save')
