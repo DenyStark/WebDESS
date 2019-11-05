@@ -45,9 +45,7 @@ button, .ui-dialog .ui-dialog-buttonpane button {
     border-radius: 3px;
     background-color: #0271b4;
     cursor: pointer;
-    vertical-align: middle;
     text-align: center;
-    height: 26px;
     outline: none;
     font-weight: 800;
     text-decoration: none;
