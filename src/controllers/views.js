@@ -5,8 +5,9 @@ const index = async(_req, res) => {
   res.render('index', { storage });
 };
 
-const model = (_req, res) => {
-  res.render('model', {});
+const model = async(_req, res) => {
+  const storage = await db.storage.getAll();
+  res.render('model', { storage });
 };
 
 module.exports = {
