@@ -28,6 +28,8 @@
 <body>
     <% include blocks/load-files.ejs %>
 
+    <% include blocks/nav-bar.ejs %>
+
     <div class="page">
         <svg class="page-svg">
             <defs>
@@ -46,10 +48,6 @@
                 </marker>
             </defs>
         </svg>
-        <div class="nav-menu">
-            <div class="menu-item selected"><a href="/">Net Designer</a></div>
-            <div class="menu-item"><a href="/model">Model Designer</a></div>
-        </div>
         <div class="content-wrapper">
             <div class="controls-area">
                 <div class="control-item">
@@ -119,5 +117,9 @@
         </div>
     </div>
 </body>
+
+<script type="text/javascript">
+    $('#navNetDesigner').addClass('active');
+</script>
 
 </html>

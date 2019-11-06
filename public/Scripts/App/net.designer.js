@@ -73,7 +73,7 @@ function newTransition() {
 }
 
 function drawTemporaryArrow(xPos, yPos) {
-    var xShift = $('.nav-menu').outerWidth();
+    var xShift = 0
     var yShift = $('.controls-area').outerHeight();
     temporaryArrowExists = true;
     var arrowSvg = '<svg class="temp-arrow"><path class="arrow-path" d="" style="stroke:black; stroke-width: 1.25px; fill: none; '
@@ -148,7 +148,7 @@ function newArc() {
 
 function redrawTemporaryArrowIfNecessary(e) {
     if (temporaryArrowExists) {
-        var xShift = $('.nav-menu').outerWidth();
+        var xShift = 0;
         var yShift = $('.controls-area').outerHeight();
         var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
         var dAttrOldValue = arrowPath.getAttribute('d');

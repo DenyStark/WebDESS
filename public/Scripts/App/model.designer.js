@@ -74,7 +74,7 @@ function newObject() {
 }
 
 function drawTemporaryArrow(xPos, yPos) {
-    var xShift = $('.nav-menu').outerWidth();
+    var xShift = 0;
     var yShift = $('.controls-area').outerHeight();
     temporaryArrowExists = true;
     temporaryArrowFixed = false;
@@ -178,7 +178,7 @@ function newArc() {
 
 function redrawTemporaryArrowIfNecessary(e) {
     if (temporaryArrowExists && !temporaryArrowFixed) {
-        var xShift = $('.nav-menu').outerWidth();
+        var xShift = 0;
         var yShift = $('.controls-area').outerHeight();
         var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
         var dAttrOldValue = arrowPath.getAttribute('d');
@@ -510,7 +510,7 @@ function addMoreSimilarObjects(objectId, number) {
         return item.id === objectId;
     })[0];
     var top = $('.controls-area').outerHeight();
-    var left = $('.nav-menu').outerWidth();
+    var left = 0
     for (var i = 0; i < number; i++) {
         var newObject = new PetriObject(newObjectId, 'O' + newObjectId, initialObject.className, initialObject.net, top, left);
         currentModel.objects.push(newObject);

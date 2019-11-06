@@ -97,7 +97,7 @@ function getCoords(elem) {
 }
 
 function getPositionWithinSandbox(posTop, posLeft, object) {
-    var leftLimit = $('.nav-menu').outerWidth();
+    var leftLimit = 0;
     var rightLimit = $(window).width() - $('.stats-container').outerWidth() - 50;
     var topLimit = $('.controls-area').outerHeight() + 16;
     var bottomLimit = $(window).height() - 50;
