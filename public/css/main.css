@@ -18,3 +18,14 @@ svg {
 .sandbox-item {
   position: absolute;
 }
+
+.sandbox-object {
+  border: 1px dashed rgba(0, 0, 0, 0);
+  transition: border-color 0.25s ease;
+}
+.sandbox-object:hover {
+  border: 1px dashed rgba(0, 123, 255, 0.25);
+}
+.sandbox-object.select {
+  border: 1px dashed rgba(0, 123, 255, 1);
+}
