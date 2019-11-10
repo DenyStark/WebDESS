@@ -5,6 +5,10 @@
     <title>Stochastic Petri Net Simulator - Net Designer</title>
 
     <% include blocks/linter.ejs %>
+
+    <script src="js/objects/drag-manager.js"></script>
+    <script src="js/objects/petri.js"></script>
+    <script src="js/net.js"></script>
 </head>
 
 <body>
@@ -15,7 +19,7 @@
 
         <div class="row flex-fill m-0">
             <% include blocks/net-tools.ejs %>
-            <div class="col hidden-md-down sandbox"></div>
+            <div class="col hidden-md-down" id="sandbox"></div>
         </div>
     </div>
 </body>

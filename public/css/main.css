@@ -14,3 +14,7 @@ svg {
   stroke: #333333;
   stroke-width: 2;
 }
+
+.sandbox-item {
+  position: absolute;
+}
