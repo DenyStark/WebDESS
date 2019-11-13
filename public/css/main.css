@@ -29,3 +29,22 @@ svg {
 .sandbox-object.select {
   border: 1px dashed rgba(0, 123, 255, 1);
 }
+
+.btn-circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 7.5px;
+}
+
+.btn-item {
+  position: absolute;
+  background-color: rgba(0, 123, 255, 0);
+  left: 23.5px;
+  top: 47px;
+}
+.btn-item.active {
+  background-color: rgba(0, 123, 255, 0.25);
+}
+.btn-item.active:hover {
+  background-color: rgba(0, 123, 255, 1);
+}

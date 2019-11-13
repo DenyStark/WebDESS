@@ -1,12 +1,12 @@
 let petriCounter = 0;
 
 class PetriObject {
-  constructor(id) {
-    this.id = id;
+  constructor(uid) {
     petriCounter++;
 
     const object = `
-      <div class="sandbox-item text-center draggable" id="item-${id}">
+      <div class="sandbox-item text-center draggable" id="item-${uid}">
+        <button type="button" class="btn btn-default btn-circle btn-item p-0" id="button-${uid}" onclick="createArc('item-${uid}');"></button>
         P${petriCounter}<br>
         <div class="sandbox-object">
           <svg width="60" height="60">
@@ -16,17 +16,19 @@ class PetriObject {
       </div>`;
     $('#sandbox').append(object);
 
-    $(`#item-${id}`).click(this.select);
+    $(`#item-${uid}`).click(() => this.select(uid));
     $(document).on('click', e => {
-      if (!$(e.target).closest(`#item-${id}`).length) this.deselect();
+      if (!$(e.target).closest(`#item-${uid}`).length) this.deselect(uid);
     });
   }
 
-  select() {
-    $($('.sandbox-object', `#${this.id}`)[0]).addClass('select');
+  select(uid) {
+    $($('.sandbox-object', `#item-${uid}`)[0]).addClass('select');
+    $(`#button-${uid}`, `#item-${uid}`).addClass('active');
   }
 
-  deselect() {
-    $($('.sandbox-object', `#item-${this.id}`)[0]).removeClass('select');
+  deselect(uid) {
+    $($('.sandbox-object', `#item-${uid}`)[0]).removeClass('select');
+    $(`#button-${uid}`, `#item-${uid}`).removeClass('active');
   }
 };
