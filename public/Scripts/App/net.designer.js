@@ -276,11 +276,11 @@ function saveCurrentPetriNet() {
         }
         return value;
     });
+
+    // TODO: Remove it
     localStorage.setItem('net' + netCopy.id, jsonNet);
 
-    $.post('files/save', { title: netName, data: jsonNet }, () => {
-        alert('The net has been saved.');
-    });
+    createFile(netName, true, netCopy);
 }
 
 function runNetModelSimulation() {
