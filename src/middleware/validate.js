@@ -12,6 +12,9 @@ const schemas = {
   id: Joi.object().keys({
     id: templates.id.required(),
   }),
+  title: Joi.object().keys({
+    title: templates.title.required(),
+  }),
   file: Joi.object().keys({
     title: templates.title.required(),
     data: templates.string.required(),

@@ -12,15 +12,19 @@ const getList = async(_req, res) => {
   successRes(res, { list });
 };
 
-const load = async(req, res) => {
-  const { id } = req.query;
-  const item = await db.storage.get({ id });
-  if (!item.path) return errorRes(res, 422, 73400);
+const loadFile = async(req, res) => {
+  const { title } = req.query;
+  const { path, date } = await db.storage.get({ title });
+  if (!path) return errorRes(res, 422, 73400);
 
-  item.data = fs.readFileSync(item.path, 'UTF8');
-  delete item.path;
+  let data;
+  try {
+    const file = fs.readFileSync(path, 'UTF8');
+    data = JSON.parse(file);
+  } catch (error) { console.error(error); }
 
-  successRes(res, { item });
+  if (!data) return errorRes(res, 500, 73500);
+  successRes(res, { file: { data, date } });
 };
 
 const save = async(req, res) => {
@@ -46,7 +50,7 @@ const update = async(req, res) => {
 
 module.exports = {
   getList,
-  load,
+  loadFile,
   save,
   update,
 };

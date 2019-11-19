@@ -10,9 +10,9 @@ module.exports = {
       WHERE "item_id" = $id;`,
 
   'get': `
-      SELECT "title", "path", "date"
+      SELECT "path", "date"
       FROM "storage"
-      WHERE "item_id" = $id;`,
+      WHERE "title" = $title;`,
 
   'get-all': `
       SELECT "title", "date"
