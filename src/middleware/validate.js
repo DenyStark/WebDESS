@@ -17,7 +17,7 @@ const schemas = {
   }),
   updateFile: Joi.object().keys({
     title: templates.title.required(),
-    data: templates.json.required(),
+    data: templates.json,
   }),
 };
 
