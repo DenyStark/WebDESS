@@ -3,28 +3,27 @@ const Joi = require('@hapi/joi');
 const { errorRes } = require('@utils/res-builder');
 
 const templates = {
-  id: Joi.number().integer().min(0),
   title: Joi.string().max(50),
-  string: Joi.string(),
+  json: Joi.object(),
 };
 
 const schemas = {
-  id: Joi.object().keys({
-    id: templates.id.required(),
-  }),
-  file: Joi.object().keys({
+  title: Joi.object().keys({
     title: templates.title.required(),
-    data: templates.string.required(),
   }),
-  update: Joi.object().keys({
-    id: templates.id.required(),
-    data: templates.string.required(),
+  createFile: Joi.object().keys({
+    title: templates.title.required(),
+    data: templates.json,
+  }),
+  updateFile: Joi.object().keys({
+    title: templates.title.required(),
+    data: templates.json.required(),
   }),
 };
 
-const validate = (type, isQuery = true) => (req, res, next) => {
+const validate = (type, isBody = true) => (req, res, next) => {
   const schema = schemas[type];
-  const data = (isQuery) ? req.query : req.body;
+  const data = isBody ? req.body : req.query;
 
   const { error } = schema.validate(data);
 

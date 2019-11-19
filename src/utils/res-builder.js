@@ -1,6 +1,7 @@
 const errors = new Map();
 
-errors.set(73400, 'Item does not exists.');
+errors.set(73400, 'File does not exists.');
+errors.set(73401, 'File already exists.');
 errors.set(73500, 'Internal server error.');
 
 const successRes = (res, data) => res.json(Object.assign({

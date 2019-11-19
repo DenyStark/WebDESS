@@ -7,14 +7,19 @@ module.exports = {
   'update': `
       UPDATE "storage"
       SET "date" = NOW()
-      WHERE "item_id" = $id;`,
+      WHERE "title" = $title;`,
+
+  'delete': `
+      DELETE FROM "storage"
+      WHERE "title" = $title;`,
 
   'get': `
-      SELECT "title", "path", "date"
+      SELECT "path", "date"
       FROM "storage"
-      WHERE "item_id" = $id;`,
+      WHERE "title" = $title;`,
 
   'get-all': `
-      SELECT "item_id" AS "id", "title", "date"
-      FROM "storage";`,
+      SELECT "title", "date"
+      FROM "storage"
+      ORDER BY "date" DESC;`,
 };

@@ -7,13 +7,16 @@ const validate = require('@middleware/validate');
 router.route('/list')
   .get(controller.getList);
 
-router.route('/load')
-  .get(validate('id'), controller.load);
+router.route('/file')
+  .get(validate('title', false), controller.loadFile);
 
-router.route('/save')
-  .post(validate('file', false), controller.save);
+router.route('/create')
+  .post(validate('createFile'), controller.createFile);
 
 router.route('/update')
-  .post(validate('update', false), controller.update);
+  .post(validate('updateFile'), controller.updateFile);
+
+router.route('/delete')
+  .post(validate('title'), controller.deleteFile);
 
 module.exports = router;
