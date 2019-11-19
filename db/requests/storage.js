@@ -7,7 +7,7 @@ module.exports = {
   'update': `
       UPDATE "storage"
       SET "date" = NOW()
-      WHERE "item_id" = $id;`,
+      WHERE "title" = $title;`,
 
   'get': `
       SELECT "path", "date"

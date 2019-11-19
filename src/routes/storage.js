@@ -8,12 +8,12 @@ router.route('/list')
   .get(controller.getList);
 
 router.route('/file')
-  .get(validate('title'), controller.loadFile);
+  .get(validate('title', false), controller.loadFile);
 
 router.route('/create')
-  .post(validate('createFile', false), controller.createFile);
+  .post(validate('createFile'), controller.createFile);
 
 router.route('/update')
-  .post(validate('update', false), controller.update);
+  .post(validate('updateFile'), controller.updateFile);
 
 module.exports = router;

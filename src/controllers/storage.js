@@ -42,20 +42,25 @@ const createFile = async(req, res) => {
   }
 };
 
-const update = async(req, res) => {
-  const { id, data } = req.body;
-  const item = await db.storage.get({ id });
-  if (!item.path) return errorRes(res, 422, 73400);
+const updateFile = async(req, res) => {
+  const { title, data } = req.body;
 
-  fs.writeFileSync(item.path, data);
-  await db.storage.update({ id });
+  const { path } = await db.storage.get({ title });
+  if (!path) return errorRes(res, 422, 73400);
 
-  successRes(res);
+  try {
+    await db.storage.update({ title });
+    fs.writeFileSync(path, JSON.stringify(data));
+    successRes(res);
+  } catch (error) {
+    console.error(error);
+    errorRes(res, 500, 73500);
+  }
 };
 
 module.exports = {
   getList,
   loadFile,
   createFile,
-  update,
+  updateFile,
 };
