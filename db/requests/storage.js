@@ -15,6 +15,7 @@ module.exports = {
       WHERE "item_id" = $id;`,
 
   'get-all': `
-      SELECT "item_id" AS "id", "title", "date"
-      FROM "storage";`,
+      SELECT "title", "date"
+      FROM "storage"
+      ORDER BY "date" DESC;`,
 };
