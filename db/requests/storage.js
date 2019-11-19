@@ -9,6 +9,10 @@ module.exports = {
       SET "date" = NOW()
       WHERE "title" = $title;`,
 
+  'delete': `
+      DELETE FROM "storage"
+      WHERE "title" = $title;`,
+
   'get': `
       SELECT "path", "date"
       FROM "storage"

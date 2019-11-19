@@ -58,9 +58,26 @@ const updateFile = async(req, res) => {
   }
 };
 
+const deleteFile = async(req, res) => {
+  const { title } = req.body;
+
+  const { path } = await db.storage.get({ title });
+  if (!path) return errorRes(res, 422, 73400);
+
+  try {
+    await db.storage.delete({ title });
+    fs.renameSync(path, path.replace(/([0-9a-f])+[.json]\w+/g, e => `~${e}`));
+    successRes(res);
+  } catch (error) {
+    console.error(error);
+    errorRes(res, 500, 73500);
+  }
+};
+
 module.exports = {
   getList,
   loadFile,
   createFile,
   updateFile,
+  deleteFile,
 };

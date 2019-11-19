@@ -28,6 +28,7 @@ module.exports = {
   storage: {
     add: getId(request(storage['add'])),
     update: request(storage['update']),
+    delete: request(storage['delete']),
     get: getRow(request(storage['get'])),
     getAll: getAll(request(storage['get-all'])),
   },

@@ -16,4 +16,7 @@ router.route('/create')
 router.route('/update')
   .post(validate('updateFile'), controller.updateFile);
 
+router.route('/delete')
+  .post(validate('title'), controller.deleteFile);
+
 module.exports = router;
