@@ -10,8 +10,8 @@ router.route('/list')
 router.route('/file')
   .get(validate('title'), controller.loadFile);
 
-router.route('/save')
-  .post(validate('file', false), controller.save);
+router.route('/create')
+  .post(validate('createFile', false), controller.createFile);
 
 router.route('/update')
   .post(validate('update', false), controller.update);

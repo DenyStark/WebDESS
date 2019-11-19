@@ -5,7 +5,7 @@ const { errorRes } = require('@utils/res-builder');
 const templates = {
   id: Joi.number().integer().min(0),
   title: Joi.string().max(50),
-  string: Joi.string(),
+  json: Joi.object(),
 };
 
 const schemas = {
@@ -15,13 +15,13 @@ const schemas = {
   title: Joi.object().keys({
     title: templates.title.required(),
   }),
-  file: Joi.object().keys({
+  createFile: Joi.object().keys({
     title: templates.title.required(),
-    data: templates.string.required(),
+    data: templates.json,
   }),
   update: Joi.object().keys({
     id: templates.id.required(),
-    data: templates.string.required(),
+    data: templates.json.required(),
   }),
 };
 

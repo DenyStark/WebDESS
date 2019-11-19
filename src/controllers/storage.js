@@ -3,8 +3,6 @@ const fs = require('fs');
 const db = require('@db');
 const { successRes, errorRes } = require('@utils/res-builder');
 
-const folder = 'src/files';
-
 const randomIndex = () => (Math.random() * 1e18).toString(16);
 
 const getList = async(_req, res) => {
@@ -17,24 +15,31 @@ const loadFile = async(req, res) => {
   const { path, date } = await db.storage.get({ title });
   if (!path) return errorRes(res, 422, 73400);
 
-  let data;
   try {
     const file = fs.readFileSync(path, 'UTF8');
-    data = JSON.parse(file);
-  } catch (error) { console.error(error); }
-
-  if (!data) return errorRes(res, 500, 73500);
-  successRes(res, { file: { data, date } });
+    const data = JSON.parse(file);
+    successRes(res, { file: { data, date } });
+  } catch (error) {
+    console.error(error);
+    errorRes(res, 500, 73500);
+  }
 };
 
-const save = async(req, res) => {
-  const { data, title } = req.body;
-  const path = `${folder}/${randomIndex()}.json`;
+const createFile = async(req, res) => {
+  const { title } = req.body;
+  const data = req.body.data || {};
+  const path = `src/files/${randomIndex()}.json`;
 
-  fs.writeFileSync(path, data);
-  await db.storage.add({ title, path });
+  const id = await db.storage.add({ title, path });
+  if (!id) return errorRes(res, 422, 73401);
 
-  successRes(res);
+  try {
+    fs.writeFileSync(path, JSON.stringify(data));
+    successRes(res);
+  } catch (error) {
+    console.error(error);
+    errorRes(res, 500, 73500);
+  }
 };
 
 const update = async(req, res) => {
@@ -51,6 +56,6 @@ const update = async(req, res) => {
 module.exports = {
   getList,
   loadFile,
-  save,
+  createFile,
   update,
 };
