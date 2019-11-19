@@ -1,8 +1,11 @@
+let enableDragDrop = true;
+
 const DragManager = new function() {
   let dragObject = {};
   const self = this;
 
   function onMouseDown(e) {
+    if (!enableDragDrop) return;
     if (e.which !== 1) return;
 
     const elem = e.target.closest('.draggable');
@@ -16,6 +19,7 @@ const DragManager = new function() {
   }
 
   function onMouseMove(e) {
+    if (!enableDragDrop) return;
     if (!dragObject.elem) return;
 
     if (!dragObject.avatar) {
@@ -53,6 +57,7 @@ const DragManager = new function() {
   }
 
   function onMouseUp(e) {
+    if (!enableDragDrop) return;
     if (dragObject.avatar) finishDrag(e);
     dragObject = {};
   }

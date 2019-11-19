@@ -2,11 +2,9 @@ let petriCounter = 0;
 
 class PetriObject {
   constructor(uid) {
-    petriCounter++;
-
     const object = `
       <div class="sandbox-item text-center draggable" id="item-${uid}">
-        <button type="button" class="btn btn-default btn-circle btn-item p-0" id="button-${uid}" onclick="createArc('item-${uid}');"></button>
+        <button type="button" class="btn btn-default btn-circle btn-item p-0" id="button-${uid}" onmousedown="createArc('${uid}', ${petriCounter});"></button>
         P${petriCounter}<br>
         <div class="sandbox-object">
           <svg width="60" height="60">
@@ -20,6 +18,8 @@ class PetriObject {
     $(document).on('click', e => {
       if (!$(e.target).closest(`#item-${uid}`).length) this.deselect(uid);
     });
+
+    petriCounter++;
   }
 
   select(uid) {
