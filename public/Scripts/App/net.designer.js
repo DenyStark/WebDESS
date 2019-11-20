@@ -164,9 +164,8 @@ function getNextElementId(elementsArray) {
     })) + 1;
 }
 
-async function loadAndOpenNet(title) {
-    const jsonNet = JSON.stringify((await loadFile(title)).data);
-    const openedNet = restorePetriNet(parsePetriNet(jsonNet));
+function buildPetriNet(json) {
+    const openedNet = restorePetriNet(parsePetriNet(json));
 
     newPlaceId = getNextElementId(openedNet.places);
     newTransitionId = getNextElementId(openedNet.transitions);
@@ -205,8 +204,12 @@ async function openPetriNet() {
             'Ok': () => {
                 cleanBuffers();
                 dialog.dialog("close");
-                const title = $select.val();
-                loadAndOpenNet(title);
+
+                (async() => {
+                    const title = $select.val();
+                    const json = JSON.stringify((await loadFile(title)).data);
+                    buildPetriNet(json);
+                })();
             }
         },
         close: () => dialog.dialog('destroy'),
@@ -219,48 +222,46 @@ function deleteCurrentPetriNet() {
     deleteFile(title);
 }
 
-function saveCurrentPetriNet() {
-    var netName = $('#netName').val();
-    if (!netName) {
-        alert('Please specify a name first.');
-        return;
-    }
-    currentPetriNet.name = netName;
-    var netValidationResult = currentPetriNet.validate();
-    if (!netValidationResult.valid) {
-        alert('Invalid Petri net: ' + netValidationResult.message);
-        return;
-    }
-    cleanBuffers();
-    var netCopy = $.extend(true, {}, currentPetriNet);
-    netCopy.places = getDeepArrayCopy(currentPetriNet.places);
-    $.each(netCopy.places, function (p, place) {
+function getCurrentModel() {
+    const model = $.extend(true, {}, currentPetriNet);
+
+    model.places = getDeepArrayCopy(currentPetriNet.places);
+    model.places.forEach(place => {
         place.arcs = undefined;
         place.markersPerLine = undefined;
         place.topLayerItem = undefined;
     });
-    netCopy.transitions = getDeepArrayCopy(currentPetriNet.transitions);
-    $.each(netCopy.transitions, function (t, transition) {
+
+    model.transitions = getDeepArrayCopy(currentPetriNet.transitions);
+    model.transitions.forEach(transition => {
         transition.arcs = undefined;
         transition.bottomNotesHeight = undefined;
         transition.distributionOptions = undefined;
     });
-    netCopy.arcs = getDeepArrayCopy(currentPetriNet.arcs);
-    $.each(netCopy.arcs, function (a, arc) {
+
+    model.arcs = getDeepArrayCopy(currentPetriNet.arcs);
+    model.arcs.forEach(arc => {
         arc.beginElementUiId = undefined;
         arc.endElementUiId = undefined;
     });
-    var jsonNet = JSON.stringify(netCopy, function (key, value) {
-        if (value === Infinity) {
-            return 'Infinity';
-        }
-        return value;
-    });
 
-    // TODO: Remove it
-    localStorage.setItem('net' + netCopy.id, jsonNet);
+    const json = JSON.stringify(model, (_k, v) => (v === Infinity) ? 'Infinity' : v);
 
-    createFile(netName, true, netCopy);
+    return { model, json };
+}
+
+function saveCurrentPetriNet() {
+    const title = $('#netName').val();
+    if (!title) return alert('Please specify a title first.');
+
+    currentPetriNet.name = title;
+    const { valid, message } = currentPetriNet.validate();
+    if (!valid) return alert(`Invalid Petri net: ${message}`);
+
+    cleanBuffers();
+    const { model } = getCurrentModel();
+
+    createFile(title, true, model);
 }
 
 function runNetModelSimulation() {
