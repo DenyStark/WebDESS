@@ -17,6 +17,7 @@
     "></script>
 
     <script type="text/javascript" src="js/files-manager.js"></script>
+    <script type="text/javascript" src="js/history.js"></script>
 
     <script type="text/javascript" src="Scripts/App/helpers.js"></script>
     <script type="text/javascript" src="Scripts/App/reflection.helpers.js"></script>
@@ -42,7 +43,7 @@
                 </marker>
             </defs>
         </svg>
-        <svg class="top-svg">
+        <svg class="top-svg" id="top-svg">
             <defs>
                 <marker id="temporaryArrow" markerWidth="13" markerHeight="13" refx="10" refy="6" orient="auto">
                     <path d="M2,1 L2,10 L10,6 L2,2" style="fill:black;" />
@@ -90,7 +91,7 @@
                     <button id="animationSettingsBtn">Animation Settings</button>
                 </div>
             </div>
-            <div class="sandbox"></div>
+            <div class="sandbox" id="sandbox"></div>
             <div class="stats-container">
                 <div class="area-title">Statistics</div>
                 <div class="stats"></div>
