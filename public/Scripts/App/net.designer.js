@@ -164,57 +164,52 @@ function getNextElementId(elementsArray) {
     })) + 1;
 }
 
-function openPetriNet() {
-    var options = [];
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            options.push({
-                netId: parseInt(key.substr(3)),
-                netName: JSON.parse(localStorage.getItem(key), netParseCensor).name
-            });
-        }
+async function loadAndOpenNet(title) {
+    const jsonNet = JSON.stringify((await loadFile(title)).data);
+    const openedNet = restorePetriNet(parsePetriNet(jsonNet));
+
+    newPlaceId = getNextElementId(openedNet.places);
+    newTransitionId = getNextElementId(openedNet.transitions);
+    newArcId = getNextElementId(openedNet.arcs);
+    temporaryArrowExists = false;
+    currentPetriNet = openedNet;
+
+    $('#netName').val(currentPetriNet.name);
+    $('.page-svg svg, .top-svg svg, .sandbox div').remove();
+    $('.stats').html('');
+
+    currentPetriNet.draw();
+}
+
+async function openPetriNet() {
+    const list = await loadList();
+    if (list.length === 0) return alert('No saved Petri nets found.');
+
+    let $select = $('#openNetSelect');
+    let selectHtml = '';
+
+    for (const item of list) {
+        const displayText = `${item.title} (${item.date})`;
+        selectHtml += `<option value="${item.title}">${displayText}</option>`;
     }
-    if (options.length === 0) {
-        alert('No saved Petri nets found.');
-        return;
-    }
-    var $select = $('#openNetSelect');
-    var newSelectHtml = '';
-    $.each(options, function (o, option) {
-        var displayText = option.netName + ' (id: ' + option.netId + ')';
-        newSelectHtml += '<option value="' + option.netId + '">' + displayText + '</option>';
-    });
-    $select.html(newSelectHtml);
-    var dialog = $('#openNetPopup').dialog({
+
+    $select.html(selectHtml);
+    const dialog = $('#openNetPopup').dialog({
         autoOpen: true,
         modal: true,
         resizable: false,
         height: 124,
         width: 292,
         buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
+            'Cancel': () => dialog.dialog('close'),
+            'Ok': () => {
                 cleanBuffers();
-                var netId = parseInt($select.val());
                 dialog.dialog("close");
-                var jsonNet = localStorage.getItem('net' + netId);
-                var openedNet = restorePetriNet(parsePetriNet(jsonNet));
-                newPlaceId = getNextElementId(openedNet.places);
-                newTransitionId = getNextElementId(openedNet.transitions);
-                newArcId = getNextElementId(openedNet.arcs);
-                temporaryArrowExists = false;
-                currentPetriNet = openedNet;
-                $('#netName').val(currentPetriNet.name);
-                $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-                $('.stats').html('');
-                currentPetriNet.draw();
+                const title = $select.val();
+                loadAndOpenNet(title);
             }
         },
-        close: function () {
-            dialog.dialog('destroy');
-        }
+        close: () => dialog.dialog('destroy'),
     });
 }
 

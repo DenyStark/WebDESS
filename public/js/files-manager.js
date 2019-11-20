@@ -4,14 +4,14 @@ const processFaulure = (faulure) => {
 };
 
 async function loadList() {
-  const { list } = await axios.get('/storage/list');
+  const { list } = (await axios.get('/storage/list')).data;
   return list || [];
 }
 
 async function loadFile(title) {
-  const query = { title };
-  const { file } = await axios.get('/storage/file', query).catch(processFaulure);
-  return file || {};
+  const params = { title };
+  const { data } = await axios.get('/storage/file', { params }).catch(processFaulure);
+  return data.file || {};
 }
 
 async function updateFile(title, data) {
