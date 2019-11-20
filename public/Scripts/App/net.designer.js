@@ -214,24 +214,9 @@ async function openPetriNet() {
 }
 
 function deleteCurrentPetriNet() {
-    var name = $('#netName').val();
-    if (!name) {
-        alert('Please specify a name first.');
-        return;
-    }
-    var success = false;
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net' && JSON.parse(localStorage.getItem(key), netParseCensor).name === name) {
-            localStorage.removeItem(key);
-            success = true;
-        }
-    }
-    if (success) {
-        reset();
-        alert('The net has been removed.');
-    } else {
-        alert('No net with this name found.');
-    }
+    const title = $('#netName').val();
+    if (!title) return alert('Please specify a title first.');
+    deleteFile(title);
 }
 
 function saveCurrentPetriNet() {
