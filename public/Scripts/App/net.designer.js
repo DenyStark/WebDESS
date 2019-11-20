@@ -164,9 +164,8 @@ function getNextElementId(elementsArray) {
     })) + 1;
 }
 
-async function loadAndOpenNet(title) {
-    const jsonNet = JSON.stringify((await loadFile(title)).data);
-    const openedNet = restorePetriNet(parsePetriNet(jsonNet));
+function buildPetriNet(json) {
+    const openedNet = restorePetriNet(parsePetriNet(json));
 
     newPlaceId = getNextElementId(openedNet.places);
     newTransitionId = getNextElementId(openedNet.transitions);
@@ -205,8 +204,12 @@ async function openPetriNet() {
             'Ok': () => {
                 cleanBuffers();
                 dialog.dialog("close");
-                const title = $select.val();
-                loadAndOpenNet(title);
+
+                (async() => {
+                    const title = $select.val();
+                    const json = JSON.stringify((await loadFile(title)).data);
+                    buildPetriNet(json);
+                })();
             }
         },
         close: () => dialog.dialog('destroy'),
