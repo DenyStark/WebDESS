@@ -50,10 +50,9 @@
                 </marker>
             </defs>
         </svg>
-        <div class="nav-menu">
-            <div class="menu-item selected"><a href="/">Net Designer</a></div>
-            <div class="menu-item"><a href="/mobile">Model Designer</a></div>
-        </div>
+
+        <% include tabs/nav %>
+
         <div class="content-wrapper">
             <div class="controls-area">
                 <div class="control-item">
@@ -123,5 +122,9 @@
         </div>
     </div>
 </body>
+
+<script>
+    $('#net-page').addClass('selected');
+</script>
 
 </html>
