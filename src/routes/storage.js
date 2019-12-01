@@ -5,7 +5,7 @@ const controller = require('@controllers/storage');
 const validate = require('@middleware/validate');
 
 router.route('/list')
-  .get(controller.getList);
+  .get(validate('type', false), controller.getList);
 
 router.route('/file')
   .get(validate('title', false), controller.loadFile);

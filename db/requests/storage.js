@@ -1,25 +1,26 @@
 module.exports = {
   'add': `
-      INSERT INTO "storage" ("title", "path")
-      VALUES ($title, $path)
+      INSERT INTO "storage" ("title", "path", "type")
+      VALUES ($title, $path, $type)
       RETURNING "item_id" AS "id";`,
 
   'update': `
       UPDATE "storage"
       SET "date" = NOW()
-      WHERE "title" = $title;`,
+      WHERE "type" = $type AND "title" = $title;`,
 
   'delete': `
       DELETE FROM "storage"
-      WHERE "title" = $title;`,
+      WHERE "type" = $type AND "title" = $title;`,
 
   'get': `
       SELECT "path", "date"
       FROM "storage"
-      WHERE "title" = $title;`,
+      WHERE "type" = $type AND "title" = $title;`,
 
   'get-all': `
       SELECT "title", "date"
       FROM "storage"
+      WHERE "type" = $type
       ORDER BY "date" DESC;`,
 };

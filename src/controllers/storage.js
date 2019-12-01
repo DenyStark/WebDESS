@@ -5,14 +5,15 @@ const { successRes, errorRes } = require('@utils/res-builder');
 
 const randomIndex = () => (Math.random() * 1e18).toString(16);
 
-const getList = async(_req, res) => {
-  const list = await db.storage.getAll();
+const getList = async(req, res) => {
+  const { type } = req.query;
+  const list = await db.storage.getAll({ type });
   successRes(res, { list });
 };
 
 const loadFile = async(req, res) => {
-  const { title } = req.query;
-  const { path, date } = await db.storage.get({ title });
+  const { type, title } = req.query;
+  const { path, date } = await db.storage.get({ type, title });
   if (!path) return errorRes(res, 422, 73400);
 
   try {
@@ -26,11 +27,11 @@ const loadFile = async(req, res) => {
 };
 
 const createFile = async(req, res) => {
-  const { title } = req.body;
+  const { type, title } = req.body;
   const data = req.body.data || {};
   const path = `src/files/${randomIndex()}.json`;
 
-  const id = await db.storage.add({ title, path });
+  const id = await db.storage.add({ title, path, type });
   if (!id) return errorRes(res, 422, 73401);
 
   try {
@@ -43,9 +44,9 @@ const createFile = async(req, res) => {
 };
 
 const updateFile = async(req, res) => {
-  const { title, data } = req.body;
+  const { type, title, data } = req.body;
 
-  const { path } = await db.storage.get({ title });
+  const { path } = await db.storage.get({ type, title });
   if (!path) return errorRes(res, 422, 73400);
 
   try {
@@ -59,13 +60,13 @@ const updateFile = async(req, res) => {
 };
 
 const deleteFile = async(req, res) => {
-  const { title } = req.body;
+  const { type, title } = req.body;
 
-  const { path } = await db.storage.get({ title });
+  const { path } = await db.storage.get({ type, title });
   if (!path) return errorRes(res, 422, 73400);
 
   try {
-    await db.storage.delete({ title });
+    await db.storage.delete({ type, title });
     fs.renameSync(path, path.replace(/([0-9a-f])+[.json]\w+/g, e => `~${e}`));
     successRes(res);
   } catch (error) {
