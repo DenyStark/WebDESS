@@ -164,7 +164,7 @@ function getNextElementId(elementsArray) {
     })) + 1;
 }
 
-function buildPetriNet(json) {
+function buildPetri(json) {
     const openedNet = restorePetriNet(parsePetriNet(json));
 
     newPlaceId = getNextElementId(openedNet.places);
@@ -208,7 +208,7 @@ async function openPetriNet() {
                 (async() => {
                     const title = $select.val();
                     const payload = await filesManager.loadFile(title);
-                    buildPetriNet(JSON.stringify(payload.data));
+                    buildPetri(JSON.stringify(payload.data));
                 })();
             }
         },

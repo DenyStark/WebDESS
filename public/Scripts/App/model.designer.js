@@ -235,7 +235,7 @@ function restoreModel(jsonModel) {
     return model;
 }
 
-function buildPetriModel(json) {
+function buildPetri(json) {
     const openedModel = restoreModel(json);
 
     newObjectId = getNextElementId(openedModel.objects);
@@ -278,7 +278,7 @@ async function openModel() {
                 (async() => {
                     const title = $select.val();
                     const payload = await filesManager.loadFile(title, 'Model');
-                    buildPetriModel(JSON.stringify(payload.data));
+                    buildPetri(JSON.stringify(payload.data));
                 })();
             }
         },
@@ -302,8 +302,7 @@ function getCurrentModel() {
     });
     model.arcs = getDeepArrayCopy(currentModel.arcs);
 
-    const json = JSON.stringify(model);
-    return { model, json };
+    return { model, json: JSON.stringify(model) };
 }
 
 function saveCurrentModel() {
