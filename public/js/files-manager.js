@@ -1,8 +1,27 @@
 const filesManager = (() => {
+  const cache = {
+    Net: new Map(),
+    Model: new Map(),
+  };
+
   const processError = error => {
     const { code, message, data } = error.responseJSON;
     alert(`Error: ${code}: ${message || data}`);
   };
+
+  const syncCache = async (type) => {
+    const params = { type }
+    const { data } = await axios.get('/storage/list', { params });
+
+    for (const { title, date } of data.list) {
+      const params = { title, type };
+      const { data } = await axios.get('/storage/file', { params }).catch(processError);
+      cache[type].set(title, { title, date, data: data.file })
+    }
+  };
+
+  syncCache('Net');
+  syncCache('Model');
 
   const loadList = async (type = 'Net') => {
     const params = { type };
