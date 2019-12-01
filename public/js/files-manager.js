@@ -23,11 +23,7 @@ const filesManager = (() => {
   syncCache('Net');
   syncCache('Model');
 
-  const loadList = async (type = 'Net') => {
-    const params = { type };
-    const payload = (await axios.get('/storage/list', { params }));
-    return payload.data.list || [];
-  };
+  const loadList = type => Array.from(cache[type], ([_k, v]) => v);
 
   const loadFile = async (title, type = 'Net') => {
     const params = { title, type };

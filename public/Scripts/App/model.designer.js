@@ -251,16 +251,16 @@ function buildPetri(json) {
     currentModel.draw();
 }
 
-async function openModel() {
-    const list = await filesManager.loadList('Model');
-    if (list.length === 0) return alert('No saved Petri object models found.');
+function openModel() {
+    const list = filesManager.loadList('Model');
+    if (list.length === 0) return alert('List is empty.');
 
     const $select = $('#openModelSelect');
     let selectHtml = '';
 
-    for (const item of list) {
-        const displayText = `${item.title} (${item.date})`;
-        selectHtml += `<option value="${item.title}">${displayText}</option>`;
+    for (const { title, date } of list) {
+        const displayText = `${title} (${date})`;
+        selectHtml += `<option value="${title}">${displayText}</option>`;
     }
 
     $select.html(selectHtml);

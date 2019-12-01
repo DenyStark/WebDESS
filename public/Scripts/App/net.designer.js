@@ -180,16 +180,16 @@ function buildPetri(json) {
     currentPetriNet.draw();
 }
 
-async function openPetriNet() {
-    const list = await filesManager.loadList();
-    if (list.length === 0) return alert('No saved Petri nets found.');
+function openPetriNet() {
+    const list = filesManager.loadList('Net');
+    if (list.length === 0) return alert('List is empty.');
 
     const $select = $('#openNetSelect');
     let selectHtml = '';
 
-    for (const item of list) {
-        const displayText = `${item.title} (${item.date})`;
-        selectHtml += `<option value="${item.title}">${displayText}</option>`;
+    for (const { title, date } of list) {
+        const displayText = `${title} (${date})`;
+        selectHtml += `<option value="${title}">${displayText}</option>`;
     }
 
     $select.html(selectHtml);
