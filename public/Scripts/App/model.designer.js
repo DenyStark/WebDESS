@@ -1,19 +1,8 @@
-function getNewPetriObjectModelId() {
-    var maxModelId = 0;
-    for (var key in localStorage) {
-        if (key.substr(0, 5) === 'model') {
-            var currModelId = parseInt(key.substr(5));
-            if (currModelId > maxModelId) {
-                maxModelId = currModelId;
-            }
-        }
-    }
-    return maxModelId + 1;
-}
+const randomId = () => Math.round(Math.random() * 1e8);
 
 var newObjectId = 1,
     newArcId = 1,
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
 var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var temporaryArrowFixed = false;
@@ -23,7 +12,7 @@ var programmingDialog;
 var net;
 
 function reset() {
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
     newObjectId = newArcId = 1;
     temporaryArrowExists = false;
     temporaryArrowFixed = false;
@@ -458,7 +447,7 @@ function generateFromFunction() {
         return;
     }
     net = null;
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
     newModel.id = newPetriObjectModelId;
     newObjectId = getNextElementId(newModel.objects);
     newArcId = getNextElementId(newModel.arcs);

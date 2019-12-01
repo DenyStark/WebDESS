@@ -1,20 +1,9 @@
-function getNewPetriNetId() {
-    var maxNetId = 0;
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            var currNetId = parseInt(key.substr(3));
-            if (currNetId > maxNetId) {
-                maxNetId = currNetId;
-            }
-        }
-    }
-    return maxNetId + 1;
-}
+const randomId = () => Math.round(Math.random() * 1e8);
 
 var newPlaceId = 1,
     newTransitionId = 1,
     newArcId = 1,
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
 var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var currentPetriNet = new PetriNet(null);
@@ -34,7 +23,7 @@ function cleanBuffers() {
 }
 
 function reset() {
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
     newPlaceId = newTransitionId = newArcId = 1;
     temporaryArrowExists = false;
     currentPetriNet = new PetriNet(null);
@@ -453,7 +442,7 @@ function generateFromFunction() {
         return;
     }
     cleanBuffers();
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
     newNet.id = newPetriNetId;
     newPlaceId = getNextElementId(newNet.places);
     newTransitionId = getNextElementId(newNet.transitions);
