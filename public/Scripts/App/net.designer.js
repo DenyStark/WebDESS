@@ -216,7 +216,7 @@ function openPetriNet() {
 function deleteCurrentPetriNet() {
     const title = $('#netName').val();
     if (!title) return alert('Please specify a title first.');
-    filesManager.deleteFile(title);
+    filesManager.deleteFile(title, 'Net');
 }
 
 function getCurrentModel() {

@@ -48,7 +48,9 @@ const filesManager = (() => {
     });
   };
 
-  const deleteFile = (title, type = 'Net') => {
+  const deleteFile = (title, type) => {
+    cache[type].delete(title);
+
     const body = { title, type };
     axios.post('/storage/delete', body).then(() => {
       alert('The file is successfully delete.');
