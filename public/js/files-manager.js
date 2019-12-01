@@ -16,7 +16,7 @@ const filesManager = (() => {
     for (const { title, date } of data.list) {
       const params = { title, type };
       const { data } = await axios.get('/storage/file', { params }).catch(processError);
-      cache[type].set(title, { title, date, data: data.file })
+      cache[type].set(title, { title, date, data: data.file.data })
     }
   };
 
@@ -24,12 +24,7 @@ const filesManager = (() => {
   syncCache('Model');
 
   const loadList = type => Array.from(cache[type], ([_k, v]) => v);
-
-  const loadFile = async (title, type = 'Net') => {
-    const params = { title, type };
-    const payload = await axios.get('/storage/file', { params }).catch(processError);
-    return payload.data.file || {};
-  };
+  const loadFile = (title, type) => cache[type].get(title);
 
   const updateFile = async (title, data, type = 'Net') => {
     const body = { title, type, data };

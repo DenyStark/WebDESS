@@ -202,14 +202,11 @@ function openPetriNet() {
         buttons: {
             'Cancel': () => dialog.dialog('close'),
             'Ok': () => {
+                const title = $select.val();
+                const { data } = filesManager.loadFile(title, 'Net');
+                buildPetri(JSON.stringify(data));
                 cleanBuffers();
                 dialog.dialog("close");
-
-                (async() => {
-                    const title = $select.val();
-                    const payload = await filesManager.loadFile(title);
-                    buildPetri(JSON.stringify(payload.data));
-                })();
             }
         },
         close: () => dialog.dialog('destroy'),

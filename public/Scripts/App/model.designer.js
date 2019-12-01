@@ -273,13 +273,10 @@ function openModel() {
         buttons: {
             'Cancel': () => dialog.dialog('close'),
             'Ok': () => {
+                const title = $select.val();
+                const { data } = filesManager.loadFile(title, 'Model');
+                buildPetri(JSON.stringify(data));
                 dialog.dialog("close");
-
-                (async() => {
-                    const title = $select.val();
-                    const payload = await filesManager.loadFile(title, 'Model');
-                    buildPetri(JSON.stringify(payload.data));
-                })();
             }
         },
         close: () => dialog.dialog('destroy'),
