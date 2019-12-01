@@ -24,11 +24,7 @@ app.get('/version', (_req, res) => {
 
 app.use('/storage', storage);
 
-app.get('/', (_req, res) => {
-  res.render('index', {});
-});
-app.get('/mobile', (_req, res) => {
-  res.render('mobile', {});
-});
+app.get('/', (_req, res) => res.render('index', {}));
+app.get('/model', (_req, res) => res.render('model', {}));
 
 module.exports = app;
