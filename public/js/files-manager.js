@@ -27,7 +27,7 @@ const filesManager = (() => {
   const loadFile = (title, type) => cache[type].get(title);
 
   const updateFile = (title, data, type) => {
-    cache[type].set(title, data);
+    cache[type].set(title, { title, date: (new Date()).toISOString(), data });
 
     const body = { title, type, data };
     axios.post('/storage/update', body).catch(processError).then(() => {
@@ -36,7 +36,7 @@ const filesManager = (() => {
   };
 
   const createFile = (title, isUpdate, type, data = {}) => {
-    cache[type].set(title, data);
+    cache[type].set(title, { title, date: (new Date()).toISOString(), data });
 
     const body = { title, type, data };
     axios.post('/storage/create', body).then(() => {
