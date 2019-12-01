@@ -221,12 +221,12 @@ function restoreModel(jsonModel) {
     if (!restoringOk) {
         return false;
     }
-    for (var i = 0; i < model.arcs.length; i++) {
-        var arc = model.arcs[i];
-        var petriObjectArc = new PetriObjectArc(arc.id, allObjs[arc.firstObjectId], allObjs[arc.secondObjectId], arc.firstObjectPlaceId, arc.secondObjectPlaceId);
-        $.extend(petriObjectArc, arc);
-        model.arcs[i] = $.extend(arc, petriObjectArc);
-    }
+
+    model.arcs = model.arcs.map(e => {
+        const firstObject = allObjs[e.firstObjectId];
+        const secondObject = allObjs[e.secondObjectId];
+        return new PetriObjectArc(e.id, firstObject, secondObject, e.firstObjectPlaceId, e.secondObjectPlaceId);
+    });
     $.each(model.objects, function (p, object) {
         object.arcs = model.arcs.filter(function (arcElem) {
             return arcElem.firstObjectId === object.id || arcElem.secondObjectId === object.id;
