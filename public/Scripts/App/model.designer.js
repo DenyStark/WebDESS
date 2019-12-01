@@ -1,4 +1,9 @@
 const randomId = () => Math.round(Math.random() * 1e8);
+const getNetOptions = () => filesManager.loadList('Net').map(e => ({
+    netId: e.data.id,
+    netName: e.title,
+    net: JSON.stringify(e.data),
+}));
 
 var newObjectId = 1,
     newArcId = 1,
@@ -29,21 +34,6 @@ function createMouseDownEvent(buttonLocation) {
     mouseDownEvent.pageX = buttonLocation.left;
     mouseDownEvent.pageY = buttonLocation.top + distBtwnButtonsAndSandbox;
     return mouseDownEvent;
-}
-
-function getNetOptions() {
-    var netOptions = [];
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            var jsonNet = localStorage.getItem(key);
-            netOptions.push({
-                netId: parseInt(key.substr(3)),
-                netName: JSON.parse(jsonNet, netParseCensor).name,
-                net: jsonNet
-            });
-        }
-    }
-    return netOptions;
 }
 
 function newObject() {

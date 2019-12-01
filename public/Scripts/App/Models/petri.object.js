@@ -146,21 +146,12 @@ PetriObject.prototype.getFinalNet = function () {
 PetriObject.prototype.openEditPopup = function () {
     var self = this;
 
-    var netOptions = [];
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            var jsonNet = localStorage.getItem(key);
-            netOptions.push({
-                netId: parseInt(key.substr(3)),
-                netName: JSON.parse(jsonNet, netParseCensor).name,
-                net: jsonNet
-            });
-        }
-    }
-    if (netOptions.length === 0) {
-        alert('No saved Petri nets found.');
-        return;
-    }
+    const netOptions = filesManager.loadList('Net').map(e => ({
+        netId: e.data.id,
+        netName: e.title,
+        net: JSON.stringify(e.data),
+    }));
+    if (netOptions.length === 0) return alert('Petri nets list is empty.');
 
     var $popup = $('#editItemPopup');
     $popup.attr('title', 'Edit a Petri Object');
