@@ -14,10 +14,10 @@ window.onload = () => {
 
   const undo = () => {
     const json = history[0];
-    if(!json) return;
+    if (!json) return;
 
     isHistoryWrite = false;
-    buildPetriNet(json);
+    buildPetri(json);
 
     isHistoryWrite = true;
     history = history.slice(1);
@@ -25,6 +25,7 @@ window.onload = () => {
 
   $('#sandbox').on('DOMSubtreeModified', updateHistory);
   $('#top-svg').on('DOMSubtreeModified', updateHistory);
+  $('#page-svg').on('DOMSubtreeModified', updateHistory);
 
   $(document).keydown(event => {
     if ((event.ctrlKey || event.metaKey) && event.keyCode === 90) undo();
