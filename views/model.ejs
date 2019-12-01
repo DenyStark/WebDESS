@@ -14,6 +14,10 @@
 
     <script type="text/javascript" src="Scripts/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="Scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+    <script type="text/javascript" src="js/files-manager.js"></script>
+
     <script type="text/javascript" src="Scripts/App/helpers.js"></script>
     <script type="text/javascript" src="Scripts/App/reflection.helpers.js"></script>
     <script type="text/javascript" src="Scripts/App/Models/draggable.js"></script>
@@ -33,10 +37,9 @@
     <div class="page">
         <svg class="page-svg"></svg>
         <svg class="top-svg"></svg>
-        <div class="nav-menu">
-            <div class="menu-item"><a href="/">Net Designer</a></div>
-            <div class="menu-item selected"><a href="/mobile">Mobile Designer</a></div>
-        </div>
+
+        <% include tabs/nav %>
+
         <div class="content-wrapper">
             <div class="controls-area">
                 <div class="control-item">
@@ -94,5 +97,9 @@
         </div>
     </div>
 </body>
+
+<script>
+    $('#model-page').addClass('selected');
+</script>
 
 </html>

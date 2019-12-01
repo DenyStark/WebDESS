@@ -235,107 +235,88 @@ function restoreModel(jsonModel) {
     return model;
 }
 
-function openModel() {
-    var options = [];
-    for (var key in localStorage) {
-        if (key.substr(0, 5) === 'model') {
-            options.push({
-                modelId: parseInt(key.substr(5)),
-                modelName: JSON.parse(localStorage.getItem(key)).name
-            });
-        }
+function buildPetriModel(json) {
+    const openedModel = restoreModel(json);
+
+    newObjectId = getNextElementId(openedModel.objects);
+    newArcId = getNextElementId(openedModel.arcs);
+    temporaryArrowExists = false;
+    temporaryArrowFixed = false;
+    currentModel = openedModel;
+
+    $('#modelName').val(currentModel.name);
+    $('.page-svg svg, .top-svg svg, .sandbox div').remove();
+    $('.stats').html('');
+
+    currentModel.draw();
+}
+
+async function openModel() {
+    const list = await filesManager.loadList('Model');
+    if (list.length === 0) return alert('No saved Petri object models found.');
+
+    const $select = $('#openModelSelect');
+    let selectHtml = '';
+
+    for (const item of list) {
+        const displayText = `${item.title} (${item.date})`;
+        selectHtml += `<option value="${item.title}">${displayText}</option>`;
     }
-    if (options.length === 0) {
-        alert('No saved Petri object models found.');
-        return;
-    }
-    var $select = $('#openModelSelect');
-    var newSelectHtml = '';
-    $.each(options, function (o, option) {
-        newSelectHtml += '<option value="' + option.modelId + '">' + option.modelName + '</option>';
-    });
-    $select.html(newSelectHtml);
-    var dialog = $('#openModelPopup').dialog({
+
+    $select.html(selectHtml);
+    const dialog = $('#openModelPopup').dialog({
         autoOpen: true,
         modal: true,
         resizable: false,
         height: 124,
         width: 292,
         buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                var modelId = parseInt($select.val());
+            'Cancel': () => dialog.dialog('close'),
+            'Ok': () => {
                 dialog.dialog("close");
-                var jsonModel = localStorage.getItem('model' + modelId);
-                var openedModel = restoreModel(jsonModel);
-                if (!openedModel) {
-                    alert('Model restoring error. This can be caused by deleting a Petri net used in the model.');
-                    return;
-                }
-                newObjectId = getNextElementId(openedModel.objects);
-                newArcId = getNextElementId(openedModel.arcs);
-                temporaryArrowExists = false;
-                temporaryArrowFixed = false;
-                currentModel = openedModel;
-                net = null;
-                $('#modelName').val(currentModel.name);
-                $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-                $('.stats').html('');
-                currentModel.draw();
+
+                (async() => {
+                    const title = $select.val();
+                    const payload = await filesManager.loadFile(title, 'Model');
+                    buildPetriModel(JSON.stringify(payload.data));
+                })();
             }
         },
-        close: function () {
-            dialog.dialog('destroy');
-        }
+        close: () => dialog.dialog('destroy'),
     });
 }
 
 function deleteCurrentModel() {
-    var name = $('#modelName').val();
-    if (!name) {
-        alert('Please specify a name first.');
-        return;
-    }
-    var success = false;
-    for (var key in localStorage) {
-        if (key.substr(0, 5) === 'model' && JSON.parse(localStorage.getItem(key)).name === name) {
-            localStorage.removeItem(key);
-            success = true;
-        }
-    }
-    if (success) {
-        reset();
-        alert('The model has been removed.');
-    } else {
-        alert('No model with this name found.');
-    }
+    const title = $('#modelName').val();
+    if (!title) return alert('Please specify a title first.');
+    filesManager.deleteFile(title, 'Model');
 }
 
-function saveCurrentModel() {
-    var modelName = $('#modelName').val();
-    if (!modelName) {
-        alert('Please specify a name first.');
-        return;
-    }
-    currentModel.name = modelName;
-    var modelValidationResult = currentModel.validate();
-    if (!modelValidationResult.valid) {
-        alert('Invalid Petri objects model: ' + modelValidationResult.message);
-        return;
-    }
-    net = null;
-    var modelCopy = $.extend(true, {}, currentModel);
-    modelCopy.objects = getDeepArrayCopy(currentModel.objects);
-    $.each(modelCopy.objects, function (o, object) {
+function getCurrentModel() {
+    const model = $.extend(true, {}, currentModel);
+
+    model.objects = getDeepArrayCopy(currentModel.objects);
+    model.objects.forEach(object => {
         object.arcs = undefined;
         object.net = undefined;
     });
-    modelCopy.arcs = getDeepArrayCopy(currentModel.arcs);
-    var jsonModel = JSON.stringify(modelCopy);
-    localStorage.setItem('model' + modelCopy.id, jsonModel);
-    alert('The model has been saved.');
+    model.arcs = getDeepArrayCopy(currentModel.arcs);
+
+    const json = JSON.stringify(model);
+    return { model, json };
+}
+
+function saveCurrentModel() {
+    const title = $('#modelName').val();
+    if (!title) return alert('Please specify a title first.');
+
+    currentModel.name = title;
+    const { valid, message } = currentModel.validate();
+    if (!valid) return alert(`Invalid Petri objects model: ${message}`);
+
+    const { model } = getCurrentModel();
+
+    filesManager.createFile(title, true, model, 'Model');
 }
 
 function runModelSimulation() {

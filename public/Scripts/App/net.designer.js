@@ -181,10 +181,10 @@ function buildPetriNet(json) {
 }
 
 async function openPetriNet() {
-    const list = await loadList();
+    const list = await filesManager.loadList();
     if (list.length === 0) return alert('No saved Petri nets found.');
 
-    let $select = $('#openNetSelect');
+    const $select = $('#openNetSelect');
     let selectHtml = '';
 
     for (const item of list) {
@@ -207,8 +207,8 @@ async function openPetriNet() {
 
                 (async() => {
                     const title = $select.val();
-                    const json = JSON.stringify((await loadFile(title)).data);
-                    buildPetriNet(json);
+                    const payload = await filesManager.loadFile(title);
+                    buildPetriNet(JSON.stringify(payload.data));
                 })();
             }
         },
@@ -219,7 +219,7 @@ async function openPetriNet() {
 function deleteCurrentPetriNet() {
     const title = $('#netName').val();
     if (!title) return alert('Please specify a title first.');
-    deleteFile(title);
+    filesManager.deleteFile(title);
 }
 
 function getCurrentModel() {
@@ -261,7 +261,7 @@ function saveCurrentPetriNet() {
     cleanBuffers();
     const { model } = getCurrentModel();
 
-    createFile(title, true, model);
+    filesManager.createFile(title, true, model);
 }
 
 function runNetModelSimulation() {
