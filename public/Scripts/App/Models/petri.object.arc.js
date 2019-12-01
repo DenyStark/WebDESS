@@ -1,71 +1,46 @@
-function PetriObjectArc(id, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId) {
+class PetriObjectArc {
+  constructor(id, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId) {
     this.id = id;
-
     this.firstObjectId = firstObject.id;
-
     this.secondObjectId = secondObject.id;
 
     this.firstObjectPlaceId = firstObjectPlaceId;
-
     this.secondObjectPlaceId = secondObjectPlaceId;
 
     firstObject.arcs.push(this);
     secondObject.arcs.push(this);
-}
+  }
 
-PetriObjectArc.prototype.setArrowPosition = function () {
-    var self = this;
+  setArrowPosition() {
+    const id = `object-arc${this.id}`;
+    const shift = 25;
 
-    var elemId = 'object-arc' + self.id;
+    const from = $(`#object${this.firstObjectId}`)[0].getBoundingClientRect();
+    const to = $(`#object${this.secondObjectId}`)[0].getBoundingClientRect();
+    const top = parseInt($('.page-svg').css('top'));
+    const left = parseInt($('.page-svg').css('left'));
 
-    var fromLocation = document.getElementById('object' + self.firstObjectId).getBoundingClientRect();
-    var toLocation = document.getElementById('object' + self.secondObjectId).getBoundingClientRect();
-    var fromLocationX = fromLocation.x;
-    var fromLocationY = fromLocation.y;
-    var toLocationX = toLocation.x;
-    var toLocationY = toLocation.y;
+    const d = `M${from.x + shift - left},${from.y + shift - top} L${to.x + shift - left},${to.y + shift - top}`;
 
-    var shift = 25;
+    $(`#${id}`).find('.arrow-path')[0].setAttribute('d', d);
+    $(`#${id}`).find('.arc-clickable-area')[0].setAttribute('d', d);
+  }
 
-    var $container = $('.page-svg');
-    var topOffset = parseInt($container.css('top'));
-    var leftOffset = parseInt($container.css('left'));
+  draw() {
+    const id = `object-arc${this.id}`;
+    if ($(`#${id}`).length) return;
 
-    var dAttrValue = "M" + (fromLocationX + shift - leftOffset) + "," + (fromLocationY + shift - topOffset) + " L"
-        + (toLocationX + shift - leftOffset) + "," + (toLocationY + shift - topOffset);
-    var arrowPath = $('#' + elemId).find('.arrow-path')[0];
-    arrowPath.setAttribute("d", dAttrValue);
-    var clickableArrowPath = $('#' + elemId).find('.arc-clickable-area')[0];
-    clickableArrowPath.setAttribute("d", dAttrValue);
-};
-
-PetriObjectArc.prototype.redraw = function () {
-    var self = this;
-
-    self.setArrowPosition();
-};
-
-PetriObjectArc.prototype.destroy = function () {
-    var self = this;
-
-    var elemId = 'object-arc' + self.id;
-
-    $('#' + elemId).remove();
-}
-
-PetriObjectArc.prototype.draw = function () {
-    var self = this;
-
-    var elemId = 'object-arc' + self.id;
-    if ($('#' + elemId).length) {
-        return;
-    }
-
-    var arrowSvg = '<svg class="petri-object-arc" id="' + elemId + '"><path class="arc-clickable-area" d="" style="stroke: transparent; stroke-width: 18px;'
-        + ' fill: none;" id="' + elemId + 'ClickableArea"/><path class="arrow-path" style="stroke:black; stroke-width: 1.25px; fill: none;" id="'
-        + elemId + 'ArrowPath"/></svg>';
+    const arrowSvg = `
+      <svg class="petri-object-arc" id="${id}">
+        <path class="arc-clickable-area" d="" style="stroke: transparent; stroke-width: 18px; fill: none;" id="${id}ClickableArea"/>
+        <path class="arrow-path" style="stroke:black; stroke-width: 1.25px; fill: none;" id="${id}ArrowPath"/>
+      </svg>`;
 
     $('.page-svg').append(arrowSvg);
+    this.setArrowPosition();
+  }
 
-    self.setArrowPosition();
-};
+  redraw() { this.setArrowPosition(); }
+
+  destroy() { $(`#object-arc${this.id}`).remove(); }
+}
