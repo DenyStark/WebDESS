@@ -26,19 +26,24 @@ const filesManager = (() => {
   const loadList = type => Array.from(cache[type], ([_k, v]) => v);
   const loadFile = (title, type) => cache[type].get(title);
 
-  const updateFile = async (title, data, type = 'Net') => {
+  const updateFile = (title, data, type) => {
+    cache[type].set(title, data);
+
     const body = { title, type, data };
-    await axios.post('/storage/update', body).catch(processError);
-    alert('The file is successfully update.');
+    axios.post('/storage/update', body).catch(processError).then(() => {
+      alert('The file is successfully update.');
+    });
   };
 
-  const createFile = async (title, isUpdate, data = {}, type = 'Net') => {
+  const createFile = (title, isUpdate, type, data = {}) => {
+    cache[type].set(title, data);
+
     const body = { title, type, data };
-    await axios.post('/storage/create', body).then(() => {
+    axios.post('/storage/create', body).then(() => {
       alert('The file is successfully save.');
     }).catch(error => {
       const { code, message } = error.response.data;
-      if (code === 73401 && isUpdate) return updateFile(title, data);
+      if (code === 73401 && isUpdate) return updateFile(title, data, type);
       else alert(`Error: ${code}: ${message}`);
     });
   };

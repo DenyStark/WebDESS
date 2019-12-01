@@ -258,7 +258,7 @@ function saveCurrentPetriNet() {
     cleanBuffers();
     const { model } = getCurrentModel();
 
-    filesManager.createFile(title, true, model);
+    filesManager.createFile(title, true, 'Net', model);
 }
 
 function runNetModelSimulation() {

@@ -312,7 +312,7 @@ function saveCurrentModel() {
 
     const { model } = getCurrentModel();
 
-    filesManager.createFile(title, true, model, 'Model');
+    filesManager.createFile(title, true, 'Model', model);
 }
 
 function runModelSimulation() {
