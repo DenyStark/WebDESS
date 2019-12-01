@@ -1,19 +1,13 @@
-function getNewPetriObjectModelId() {
-    var maxModelId = 0;
-    for (var key in localStorage) {
-        if (key.substr(0, 5) === 'model') {
-            var currModelId = parseInt(key.substr(5));
-            if (currModelId > maxModelId) {
-                maxModelId = currModelId;
-            }
-        }
-    }
-    return maxModelId + 1;
-}
+const randomId = () => Math.round(Math.random() * 1e8);
+const getNetOptions = () => filesManager.loadList('Net').map(e => ({
+    netId: e.data.id,
+    netName: e.title,
+    net: JSON.stringify(e.data),
+}));
 
 var newObjectId = 1,
     newArcId = 1,
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
 var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var temporaryArrowFixed = false;
@@ -23,7 +17,7 @@ var programmingDialog;
 var net;
 
 function reset() {
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
     newObjectId = newArcId = 1;
     temporaryArrowExists = false;
     temporaryArrowFixed = false;
@@ -40,21 +34,6 @@ function createMouseDownEvent(buttonLocation) {
     mouseDownEvent.pageX = buttonLocation.left;
     mouseDownEvent.pageY = buttonLocation.top + distBtwnButtonsAndSandbox;
     return mouseDownEvent;
-}
-
-function getNetOptions() {
-    var netOptions = [];
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            var jsonNet = localStorage.getItem(key);
-            netOptions.push({
-                netId: parseInt(key.substr(3)),
-                netName: JSON.parse(jsonNet, netParseCensor).name,
-                net: jsonNet
-            });
-        }
-    }
-    return netOptions;
 }
 
 function newObject() {
@@ -221,12 +200,12 @@ function restoreModel(jsonModel) {
     if (!restoringOk) {
         return false;
     }
-    for (var i = 0; i < model.arcs.length; i++) {
-        var arc = model.arcs[i];
-        var petriObjectArc = new PetriObjectArc(arc.id, allObjs[arc.firstObjectId], allObjs[arc.secondObjectId], arc.firstObjectPlaceId, arc.secondObjectPlaceId);
-        $.extend(petriObjectArc, arc);
-        model.arcs[i] = $.extend(arc, petriObjectArc);
-    }
+
+    model.arcs = model.arcs.map(e => {
+        const firstObject = allObjs[e.firstObjectId];
+        const secondObject = allObjs[e.secondObjectId];
+        return new PetriObjectArc(e.id, firstObject, secondObject, e.firstObjectPlaceId, e.secondObjectPlaceId);
+    });
     $.each(model.objects, function (p, object) {
         object.arcs = model.arcs.filter(function (arcElem) {
             return arcElem.firstObjectId === object.id || arcElem.secondObjectId === object.id;
@@ -251,16 +230,16 @@ function buildPetri(json) {
     currentModel.draw();
 }
 
-async function openModel() {
-    const list = await filesManager.loadList('Model');
-    if (list.length === 0) return alert('No saved Petri object models found.');
+function openModel() {
+    const list = filesManager.loadList('Model');
+    if (list.length === 0) return alert('List is empty.');
 
     const $select = $('#openModelSelect');
     let selectHtml = '';
 
-    for (const item of list) {
-        const displayText = `${item.title} (${item.date})`;
-        selectHtml += `<option value="${item.title}">${displayText}</option>`;
+    for (const { title, date } of list) {
+        const displayText = `${title} (${date})`;
+        selectHtml += `<option value="${title}">${displayText}</option>`;
     }
 
     $select.html(selectHtml);
@@ -273,13 +252,10 @@ async function openModel() {
         buttons: {
             'Cancel': () => dialog.dialog('close'),
             'Ok': () => {
+                const title = $select.val();
+                const { data } = filesManager.loadFile(title, 'Model');
+                buildPetri(JSON.stringify(data));
                 dialog.dialog("close");
-
-                (async() => {
-                    const title = $select.val();
-                    const payload = await filesManager.loadFile(title, 'Model');
-                    buildPetri(JSON.stringify(payload.data));
-                })();
             }
         },
         close: () => dialog.dialog('destroy'),
@@ -315,7 +291,7 @@ function saveCurrentModel() {
 
     const { model } = getCurrentModel();
 
-    filesManager.createFile(title, true, model, 'Model');
+    filesManager.createFile(title, true, 'Model', model);
 }
 
 function runModelSimulation() {
@@ -461,7 +437,7 @@ function generateFromFunction() {
         return;
     }
     net = null;
-    newPetriObjectModelId = getNewPetriObjectModelId();
+    newPetriObjectModelId = randomId();
     newModel.id = newPetriObjectModelId;
     newObjectId = getNextElementId(newModel.objects);
     newArcId = getNextElementId(newModel.arcs);

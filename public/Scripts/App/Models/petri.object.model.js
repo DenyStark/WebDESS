@@ -261,13 +261,6 @@ PetriObjectModel.prototype.validate = function () {
 };
 
 PetriObjectModel.prototype.draw = function () {
-    var self = this;
-
-    $.each(self.objects, function (i, object) {
-        object.draw();
-    });
-
-    $.each(self.arcs, function (i, arc) {
-        arc.draw();
-    });
+    this.objects.forEach(e => e.draw());
+    this.arcs.forEach(e => e.draw());
 };

@@ -1,20 +1,9 @@
-function getNewPetriNetId() {
-    var maxNetId = 0;
-    for (var key in localStorage) {
-        if (key.substr(0, 3) === 'net') {
-            var currNetId = parseInt(key.substr(3));
-            if (currNetId > maxNetId) {
-                maxNetId = currNetId;
-            }
-        }
-    }
-    return maxNetId + 1;
-}
+const randomId = () => Math.round(Math.random() * 1e8);
 
 var newPlaceId = 1,
     newTransitionId = 1,
     newArcId = 1,
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
 var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var currentPetriNet = new PetriNet(null);
@@ -34,7 +23,7 @@ function cleanBuffers() {
 }
 
 function reset() {
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
     newPlaceId = newTransitionId = newArcId = 1;
     temporaryArrowExists = false;
     currentPetriNet = new PetriNet(null);
@@ -180,16 +169,16 @@ function buildPetri(json) {
     currentPetriNet.draw();
 }
 
-async function openPetriNet() {
-    const list = await filesManager.loadList();
-    if (list.length === 0) return alert('No saved Petri nets found.');
+function openPetriNet() {
+    const list = filesManager.loadList('Net');
+    if (list.length === 0) return alert('List is empty.');
 
     const $select = $('#openNetSelect');
     let selectHtml = '';
 
-    for (const item of list) {
-        const displayText = `${item.title} (${item.date})`;
-        selectHtml += `<option value="${item.title}">${displayText}</option>`;
+    for (const { title, date } of list) {
+        const displayText = `${title} (${date})`;
+        selectHtml += `<option value="${title}">${displayText}</option>`;
     }
 
     $select.html(selectHtml);
@@ -202,14 +191,11 @@ async function openPetriNet() {
         buttons: {
             'Cancel': () => dialog.dialog('close'),
             'Ok': () => {
+                const title = $select.val();
+                const { data } = filesManager.loadFile(title, 'Net');
+                buildPetri(JSON.stringify(data));
                 cleanBuffers();
                 dialog.dialog("close");
-
-                (async() => {
-                    const title = $select.val();
-                    const payload = await filesManager.loadFile(title);
-                    buildPetri(JSON.stringify(payload.data));
-                })();
             }
         },
         close: () => dialog.dialog('destroy'),
@@ -219,7 +205,7 @@ async function openPetriNet() {
 function deleteCurrentPetriNet() {
     const title = $('#netName').val();
     if (!title) return alert('Please specify a title first.');
-    filesManager.deleteFile(title);
+    filesManager.deleteFile(title, 'Net');
 }
 
 function getCurrentModel() {
@@ -261,7 +247,7 @@ function saveCurrentPetriNet() {
     cleanBuffers();
     const { model } = getCurrentModel();
 
-    filesManager.createFile(title, true, model);
+    filesManager.createFile(title, true, 'Net', model);
 }
 
 function runNetModelSimulation() {
@@ -456,7 +442,7 @@ function generateFromFunction() {
         return;
     }
     cleanBuffers();
-    newPetriNetId = getNewPetriNetId();
+    newPetriNetId = randomId();
     newNet.id = newPetriNetId;
     newPlaceId = getNextElementId(newNet.places);
     newTransitionId = getNextElementId(newNet.transitions);
