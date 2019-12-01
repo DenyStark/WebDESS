@@ -184,7 +184,7 @@ async function openPetriNet() {
     const list = await filesManager.loadList();
     if (list.length === 0) return alert('No saved Petri nets found.');
 
-    let $select = $('#openNetSelect');
+    const $select = $('#openNetSelect');
     let selectHtml = '';
 
     for (const item of list) {
@@ -207,7 +207,7 @@ async function openPetriNet() {
 
                 (async() => {
                     const title = $select.val();
-                    const payload = await filesManager.loadFile(title)
+                    const payload = await filesManager.loadFile(title);
                     buildPetriNet(JSON.stringify(payload.data));
                 })();
             }
