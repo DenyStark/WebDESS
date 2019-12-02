@@ -175,8 +175,8 @@ div.hidden {
 }
 
 .controls-area {
-    padding: 15px;
-    height: 26px;
+    /* padding: 15px; */
+    height: 56px;
     background-color: #0091EA;
 }
 
