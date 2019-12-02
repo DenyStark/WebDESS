@@ -156,24 +156,6 @@ div.hidden {
     margin: 0;
 }
 
-.page-svg {
-    position: absolute;
-    width: calc(100% - 520px);
-    height: calc(100% - 56px);
-    left: 190px;
-    top: 56px;
-}
-
-.top-svg {
-    display: none;
-    position: absolute;
-    width: calc(100% - 520px);
-    height: calc(100% - 56px);
-    left: 190px;
-    top: 56px;
-    z-index: 105;
-}
-
 .controls-area {
     /* padding: 15px; */
     height: 56px;
@@ -191,23 +173,6 @@ div.hidden {
     display: inline-block;
     vertical-align: middle;
     line-height: 24px;
-}
-
-.sandbox {
-    height: calc(100% - 56px);
-    width: calc(100% - 330px);
-    float: left;
-}
-
-.stats-container {
-    float: right;
-    width: 294px;
-    padding: 15px;
-    height: calc(100% - 66px);
-    position: relative;
-    z-index: 120;
-    background-color: #E8E7E9;
-    border-left: 6px solid #bebebe;
 }
 
 .stats {

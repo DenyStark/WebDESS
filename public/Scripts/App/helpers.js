@@ -96,25 +96,16 @@ function getCoords(elem) {
     return { top: Math.round(top), left: Math.round(left) };
 }
 
-function getPositionWithinSandbox(posTop, posLeft, object) {
-    var leftLimit = $('.nav-menu').outerWidth();
-    var rightLimit = $(window).width() - $('.stats-container').outerWidth() - 50;
-    var topLimit = $('.controls-area').outerHeight() + 16;
-    var bottomLimit = $(window).height() - 50;
-    if (object.bottomNotesHeight) {
-        bottomLimit -= object.bottomNotesHeight;
-    }
-    if (posTop < topLimit) {
-        posTop = topLimit;
-    } else if (posTop > bottomLimit) {
-        posTop = bottomLimit;
-    }
-    if (posLeft < leftLimit) {
-        posLeft = leftLimit;
-    } else if (posLeft > rightLimit) {
-        posLeft = rightLimit;
-    }
-    return { posTop: posTop, posLeft: posLeft };
+function getPositionWithinSandbox(top, left, object) {
+    const minX = 0;
+    const maxX = $(window).width() - $('.stats-container').outerWidth() - 50;
+    const minY = $('#navbar').outerHeight() + 16;
+    const maxY = $(window).height() - 50 - (object.bottomNotesHeight || 0);
+
+    return {
+        posTop: Math.min(Math.max(minY, top), maxY),
+        posLeft: Math.min(Math.max(minX, left), maxX),
+    };
 }
 
 function enableDragAndDrop(elemId, object) {

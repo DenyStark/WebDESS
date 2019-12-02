@@ -61,17 +61,14 @@ function newTransition() {
     newTransitionId++;
 }
 
-function drawTemporaryArrow(xPos, yPos) {
-    var xShift = $('.nav-menu').outerWidth();
-    var yShift = $('.controls-area').outerHeight();
+function drawTemporaryArrow(x, y) {
     temporaryArrowExists = true;
-    var arrowSvg = '<svg class="temp-arrow"><path class="arrow-path" d="" style="stroke:black; stroke-width: 1.25px; fill: none; '
-        + 'marker-end: url(#temporaryArrow);"/></svg>';
-    $('.top-svg')
-        .show()
-        .append(arrowSvg);
-    var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
-    arrowPath.setAttribute("d", "M" + (xPos - xShift) + "," + (yPos - yShift) + " L" + (xPos - xShift) + "," + (yPos - yShift));
+    const arrow = `
+        <svg class="temp-arrow">
+            <path class="arrow-path" d="" style="stroke:black; stroke-width: 1.25px; fill: none; marker-end: url(#temporaryArrow);"/>
+        </svg>`;
+    $('.top-svg').show().append(arrow);
+    $('.temp-arrow').find('.arrow-path')[0].setAttribute('d', `M${x},${y} L${x},${y}`);
 }
 
 function removeTemporaryArrow() {
@@ -137,13 +134,10 @@ function newArc() {
 
 function redrawTemporaryArrowIfNecessary(e) {
     if (temporaryArrowExists) {
-        var xShift = $('.nav-menu').outerWidth();
-        var yShift = $('.controls-area').outerHeight();
-        var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
-        var dAttrOldValue = arrowPath.getAttribute('d');
-        var indexOfL = dAttrOldValue.indexOf('L');
-        var dAttrNewValue = dAttrOldValue.substr(0, indexOfL + 1) + (e.pageX - xShift) + "," + (e.pageY - yShift);
-        arrowPath.setAttribute('d', dAttrNewValue);
+        const arrow = $('.temp-arrow').find('.arrow-path')[0];
+        const oldD = arrow.getAttribute('d');
+        const newD = `${oldD.slice(0, oldD.indexOf('L'))}L${e.pageX},${e.pageY}`;
+        arrow.setAttribute('d', newD);
     }
 }
 

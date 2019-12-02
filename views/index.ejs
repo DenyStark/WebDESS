@@ -36,39 +36,20 @@
 </head>
 
 <body>
-  <div class="container-full">
+  <div class="container-full d-flex flex-column h-100 p-0">
     <% include tabs/nav-bar %>
 
-    <div class="container-fluid h-100 d-flex flex-column p-0">
-      <svg class="page-svg">
-        <defs>
-          <marker id="fromPlaceArrow" markerWidth="13" markerHeight="13" refx="12" refy="6" orient="auto">
-            <path d="M2,1 L2,10 L10,6 L2,2" style="fill:black;" />
-          </marker>
-          <marker id="toPlaceArrow" markerWidth="13" markerHeight="13" refx="30" refy="6" orient="auto">
-            <path d="M2,1 L2,10 L10,6 L2,2" style="fill:black;" />
-          </marker>
-        </defs>
-      </svg>
-      <svg class="top-svg" id="top-svg">
-        <defs>
-          <marker id="temporaryArrow" markerWidth="13" markerHeight="13" refx="10" refy="6" orient="auto">
-            <path d="M2,1 L2,10 L10,6 L2,2" style="fill:black;" />
-          </marker>
-        </defs>
-      </svg>
-
-      <div class="row flex-fill m-0">
-        <div class="sandbox" id="sandbox"></div>
-        <div class="stats-container">
-          <div class="area-title">Statistics</div>
-          <div class="stats"></div>
-        </div>
+    <div class="row flex-fill m-0">
+      <div class="sandbox flex-grow-1 m-0" id="sandbox"></div>
+      <div class="stats-container bg-white shadow w-20 px-3 py-2 m-0 z-10">
+        <div class="area-title">Statistics</div>
+        <div class="stats"></div>
       </div>
     </div>
-  </div>
 
-  <% include tabs/popups %>
+    <% include tabs/svg %>
+    <% include tabs/popups %>
+  </div>
 </body>
 
 <script>

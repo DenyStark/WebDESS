@@ -33,14 +33,14 @@ function prepareStatsArea() {
     $('span.stats-line-title').each(function () {
         $(this).attr('title', $(this).text());
     });
-    $(document).tooltip();
+    // $(document).tooltip();
 }
 
 function finalizeStats() {
     $('span.stats-value').each(function () {
         $(this).attr('title', $(this).text());
     });
-    $(document).tooltip();
+    // $(document).tooltip();
 }
 
 function updateStatsForTransitions(displayChanges, isLastUpdate, prevTime, nextTime) {
@@ -442,10 +442,15 @@ function runSimulationForNet(currentNet, simulationDuration, durationOfEachAnima
     var buttonsToDisableSelector = withAnimation ? 'button:not(#stopBtn)' : 'button';
     $(buttonsToDisableSelector).addClass('disabled-button');
     $('.stats').html('');
+
     if (withAnimation) {
+        console.log(1);
         prepareStatsArea();
+        console.log(2);
         startTime = (new Date()).getTime();
+        console.log(3);
         makeStepWithAnimation();
+        console.log(4);
     } else {
         $('.stats').html('<div class="stats-title no-underline">Simulation in progress. Please wait...</div>');
         startTime = (new Date()).getTime();
