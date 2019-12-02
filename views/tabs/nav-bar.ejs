@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="navbar-nav dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Net Designer
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/model">Model Designer</a>
+        </div>
+      </li>
+    </ul>
+    <div class="control-item">
+      <span>Add: </span>
+      <button id="addPlaceBtn">Place</button>
+      <button id="addTransitionBtn">Transition</button>
+      <button id="addArcBtn">Arc</button>
+    </div>
+    <div class="control-item">
+      <span>Save as: </span>
+      <input type="text" id="netName" />
+      <button id="saveNetBtn">Save</button>
+      <button id="openNetBtn">Open</button>
+      <button id="delBtn">Delete</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    <div class="control-item">
+      <button id="programmingBtn">Programming</button>
+    </div>
+    <div class="control-item">
+      <span>Simulation duration (c.u.): </span>
+      <input class="short-input" type="number" id="simulationDuration" min="1" value="1000" />
+      <button id="runBtn">Run</button>
+      <button id="stopBtn">Stop</button>
+    </div>
+    <div class="control-item">
+      <input type="checkbox" id="enableAnimationChbx" checked="checked" />
+      <span>Animate</span>
+    </div>
+    <div class="control-item">
+      <button id="animationSettingsBtn">Animation Settings</button>
+    </div>
+  </div>
+</nav>
