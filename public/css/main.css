@@ -10,6 +10,22 @@ a:hover {
   text-decoration: none;
 }
 
+button, .ui-dialog .ui-dialog-buttonpane button {
+  padding: .2rem .5rem;
+  vertical-align: middle;
+  border: none;
+  border-radius: .25rem!important;
+  font-weight: 500;
+  font-size: 1rem;
+  background-color: #6c757d;
+  color: white;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+button:hover, .ui-dialog .ui-dialog-buttonpane button:hover {
+  background-color: #5a6268;
+}
+
 .w-20 {
   width: 20%!important;
 }
