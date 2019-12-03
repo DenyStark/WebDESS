@@ -11,6 +11,7 @@ a:hover {
 }
 
 button, .ui-dialog .ui-dialog-buttonpane button {
+  margin: .1rem .2rem!important;
   padding: .2rem .5rem;
   vertical-align: middle;
   border: none;
@@ -24,6 +25,10 @@ button, .ui-dialog .ui-dialog-buttonpane button {
 
 button:hover, .ui-dialog .ui-dialog-buttonpane button:hover {
   background-color: #5a6268;
+}
+
+.small {
+  font-size: 70%!important;
 }
 
 .w-20 {

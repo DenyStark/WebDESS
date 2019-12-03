@@ -43,7 +43,7 @@ function createMouseDownEvent(buttonLocation) {
 
 function newPlace() {
     cleanBuffers();
-    var location = getCoords($('#addPlaceBtn')[0]);
+    var location = getCoords($('#add-place-btn')[0]);
     var newPlace = new Place(newPlaceId, 'P' + newPlaceId, 0, location.top + distBtwnButtonsAndSandbox, location.left);
     currentPetriNet.places.push(newPlace);
     newPlace.draw();
@@ -53,7 +53,7 @@ function newPlace() {
 
 function newTransition() {
     cleanBuffers();
-    var location = getCoords($('#addTransitionBtn')[0]);
+    var location = getCoords($('#add-transition-btn')[0]);
     var newTransition = new Transition(newTransitionId, 'T' + newTransitionId, 0, 0, null, 0, 1, 'Infinity', location.top + distBtwnButtonsAndSandbox, location.left);
     currentPetriNet.transitions.push(newTransition);
     newTransition.draw();
@@ -488,12 +488,6 @@ $(document).ready(function () {
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
-
-    $('#addPlaceBtn').on('click', newPlace);
-
-    $('#addTransitionBtn').on('click', newTransition);
-
-    $('#addArcBtn').on('click', newArc);
 
     $('#resetBtn').on('click', reset);
 
