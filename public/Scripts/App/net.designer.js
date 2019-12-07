@@ -254,14 +254,8 @@ function runNetModelSimulation() {
         alert('Petri Net has parameters. Please provide specific values for them first.');
         return;
     }
-    var durationStr = $('#simulationDuration').val();
-    if (!durationStr || Math.floor(durationStr) != durationStr || !$.isNumeric(durationStr) || parseInt(durationStr) < 1) {
-        alert('Simulation duration must be a positive integer.');
-        return;
-    }
-    var duration = parseInt(durationStr);
     setTimeout(function () {
-        runSimulationForNet(currentPetriNet, duration);
+        runSimulationForNet(currentPetriNet);
     }, 0);
 }
 
