@@ -1,5 +1,6 @@
 let animationDuration = 1000;
 let cuDuration = 1000;
+let withAnimation = false;
 
 var duration;
 var currentTime;
@@ -9,7 +10,6 @@ var activeTransitions;
 var allDelaysAreZero;
 var animationMarkersCount;
 var stepsCount;
-var withAnimation;
 var startTime;
 
 function prepareStatsArea() {
@@ -419,7 +419,7 @@ function makeSteps() {
     performFinalActions();
 }
 
-function runSimulationForNet(currentNet, simulationDuration, enableAnimation) {
+function runSimulationForNet(currentNet, simulationDuration) {
     net = currentNet;
     for (var k = 0; k < net.transitions.length; k++) {
         var transition = net.transitions[k];
@@ -434,7 +434,6 @@ function runSimulationForNet(currentNet, simulationDuration, enableAnimation) {
     }
     allDelaysAreZero = net.allDelaysAreZero();
     duration = simulationDuration;
-    withAnimation = enableAnimation;
     currentTime = 0;
     stepsCount = 0;
     needToStop = false;

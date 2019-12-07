@@ -260,9 +260,8 @@ function runNetModelSimulation() {
         return;
     }
     var duration = parseInt(durationStr);
-    var enableAnimation = $('#enableAnimationChbx').is(':checked');
     setTimeout(function () {
-        runSimulationForNet(currentPetriNet, duration, enableAnimation);
+        runSimulationForNet(currentPetriNet, duration);
     }, 0);
 }
 
