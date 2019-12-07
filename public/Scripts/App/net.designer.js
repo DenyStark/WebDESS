@@ -8,7 +8,7 @@ var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var currentPetriNet = new PetriNet(null);
 currentPetriNet.id = newPetriNetId;
-var programmingDialog, animationSettingsDialog;
+var programmingDialog;
 var needToStop;
 var net;
 
@@ -260,21 +260,9 @@ function runNetModelSimulation() {
         return;
     }
     var duration = parseInt(durationStr);
-    var animDurStr = $('#animationDuration').val();
-    if (!animDurStr || Math.floor(animDurStr) != animDurStr || !$.isNumeric(animDurStr) || parseInt(animDurStr) < 10) {
-        alert('Animation duration must be a positive integer no less than 10.');
-        return;
-    }
-    var animationDuration = parseInt(animDurStr);
-    var cuDurStr = $('#cuDuration').val();
-    if (!cuDurStr || Math.floor(cuDurStr) != cuDurStr || !$.isNumeric(cuDurStr) || parseInt(cuDurStr) < 10) {
-        alert('C.u. duration must be a positive integer no less than 10.');
-        return;
-    }
-    var cuDuration = parseInt(cuDurStr);
     var enableAnimation = $('#enableAnimationChbx').is(':checked');
     setTimeout(function () {
-        runSimulationForNet(currentPetriNet, duration, animationDuration, cuDuration, enableAnimation);
+        runSimulationForNet(currentPetriNet, duration, enableAnimation);
     }, 0);
 }
 
@@ -459,10 +447,6 @@ function openProgrammingPopup() {
     programmingDialog.dialog('open');
 }
 
-function openAnimationSettings() {
-    animationSettingsDialog.dialog('open');
-}
-
 $(document).ready(function () {
     programmingDialog = $('#programmingPopup').dialog({
         autoOpen: false,
@@ -475,14 +459,6 @@ $(document).ready(function () {
             'Generate from Function': generateFromFunction,
             'Clear': clearProgrammingPopup
         }
-    });
-
-    animationSettingsDialog = $('#animationSettingsPopup').dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        width: 296,
-        height: 112
     });
 
     allowDragAndDrop = true;
@@ -502,8 +478,6 @@ $(document).ready(function () {
     $('#runBtn').on('click', runNetModelSimulation);
 
     $('#stopBtn').on('click', requestStop);
-
-    $('#animationSettingsBtn').on('click', openAnimationSettings);
 
     var $focusedElement;
     $(document).on('netEdited', cleanBuffers);

@@ -14,14 +14,15 @@
     </ul>
 
     <div class="col">
-      <div class="small text-center text-white m-0">Add new item</div>
       <div class="row justify-content-center">
-        <button id="add-place-btn" onclick="newPlace()">Place</button>
-        <button id="add-transition-btn" onclick="newTransition()">Transition</button>
-        <button onclick="newArc()">Arc</button>
+        <button class="btn-main" id="add-place-btn" onclick="newPlace()">Place</button>
+        <button class="btn-main" id="add-transition-btn" onclick="newTransition()">Transition</button>
+        <button class="btn-main" onclick="newArc()">Arc</button>
       </div>
+      <div class="small text-center text-white m-0">Add new item</div>
     </div>
 
+    <!-- TODO: refactor this -->
     <div class="control-item">
       <span>Save as: </span>
       <input type="text" id="netName" />
@@ -43,8 +44,11 @@
       <input type="checkbox" id="enableAnimationChbx" checked="checked" />
       <span>Animate</span>
     </div>
-    <div class="control-item">
-      <button id="animationSettingsBtn">Animation Settings</button>
+    <!--  -->
+
+    <div class="control-item text-center">
+      <button class="btn-main" data-toggle="modal" data-target="#settings-mod"><i class="fas fa-cog"></i></button>
+      <div class="small text-white m-0">Settings</div>
     </div>
   </div>
 </nav>

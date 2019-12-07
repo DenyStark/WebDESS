@@ -10,7 +10,7 @@ a:hover {
   text-decoration: none;
 }
 
-button, .ui-dialog .ui-dialog-buttonpane button {
+.btn-main, .ui-dialog .ui-dialog-buttonpane .btn-main {
   margin: .1rem .2rem!important;
   padding: .2rem .5rem;
   vertical-align: middle;
@@ -23,7 +23,7 @@ button, .ui-dialog .ui-dialog-buttonpane button {
   transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-button:hover, .ui-dialog .ui-dialog-buttonpane button:hover {
+.btn-main:hover, .ui-dialog .ui-dialog-buttonpane .btn-main:hover {
   background-color: #5a6268;
 }
 

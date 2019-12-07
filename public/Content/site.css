@@ -13,32 +13,8 @@ body {
     font-size: 12px;
 }
 
-input:not([type="checkbox"]), select {
-    border: none;
-    background-color: rgba(145, 204, 255, 0.39);
-    height: 24px;
-    padding: 0 8px;
-    vertical-align: middle;
-    width: 100px;
-    margin-left: 3px;
-}
-
-input[type="checkbox"] {
-    vertical-align: middle;
-}
-
-input.short-input {
-    width: 38px;
-}
-
 select {
     width: 116px;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-    margin: 0 0 0 3px;
 }
 
 .ui-dialog.ui-widget.ui-widget-content {
@@ -139,7 +115,7 @@ div.hidden {
 
 .control-item {
     display: inline-block;
-    margin: 0 6px 6px 12px;
+    margin: 0 .5em;
 }
 
 .control-item span {
