@@ -27,6 +27,11 @@ a:hover {
   background-color: #5a6268;
 }
 
+.btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .small {
   font-size: 70%!important;
 }

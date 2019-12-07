@@ -44,11 +44,6 @@ button.ui-button:hover .ui-icon.ui-button-icon, button.ui-button:active .ui-icon
     background-image: url('Images/ui-icons_ffffff_256x240.png');
 }
 
-button.disabled-button {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
 div.hidden {
     visibility: hidden;
     pointer-events: none;

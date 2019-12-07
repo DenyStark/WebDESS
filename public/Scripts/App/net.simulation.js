@@ -343,7 +343,7 @@ function performFinalActions() {
         }
     }
     $('.stats').append('<div class="stats-title">Time elapsed: ' + getTimeString(endTime - startTime) + '</div>');
-    $('.disabled-button').removeClass('disabled-button');
+    $('.btn-disabled').removeClass('btn-disabled');
 }
 
 function makeStepWithAnimation() {
@@ -436,18 +436,15 @@ function runSimulationForNet(currentNet) {
     currentTime = 0;
     stepsCount = 0;
     needToStop = false;
-    var buttonsToDisableSelector = withAnimation ? 'button:not(#stopBtn)' : 'button';
-    $(buttonsToDisableSelector).addClass('disabled-button');
+
+    $(withAnimation ? 'button:not(#stop-btn)' : 'button').addClass('btn-disabled');
+
     $('.stats').html('');
 
     if (withAnimation) {
-        console.log(1);
         prepareStatsArea();
-        console.log(2);
         startTime = (new Date()).getTime();
-        console.log(3);
         makeStepWithAnimation();
-        console.log(4);
     } else {
         $('.stats').html('<div class="stats-title no-underline">Simulation in progress. Please wait...</div>');
         startTime = (new Date()).getTime();

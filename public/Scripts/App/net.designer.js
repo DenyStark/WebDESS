@@ -245,18 +245,13 @@ function saveCurrentPetriNet() {
 }
 
 function runNetModelSimulation() {
-    var netValidationResult = currentPetriNet.validate();
-    if (!netValidationResult.valid) {
-        alert('Invalid Petri net: ' + netValidationResult.message);
-        return;
-    }
-    if (currentPetriNet.hasParameters()) {
-        alert('Petri Net has parameters. Please provide specific values for them first.');
-        return;
-    }
-    setTimeout(function () {
-        runSimulationForNet(currentPetriNet);
-    }, 0);
+    const { valid,message } = currentPetriNet.validate();
+    if (!valid) return alert(`Invalid Petri net: ${message}`);
+
+    if (currentPetriNet.hasParameters())
+        return alert('Petri Net has parameters. Please provide specific values for them first.');
+
+    runSimulationForNet(currentPetriNet);
 }
 
 function deleteArc(id) {
@@ -467,10 +462,6 @@ $(document).ready(function () {
     $('#openNetBtn').on('click', openPetriNet);
 
     $('#programmingBtn').on('click', openProgrammingPopup);
-
-    $('#runBtn').on('click', runNetModelSimulation);
-
-    $('#stopBtn').on('click', requestStop);
 
     var $focusedElement;
     $(document).on('netEdited', cleanBuffers);
