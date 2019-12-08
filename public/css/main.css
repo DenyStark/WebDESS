@@ -51,3 +51,7 @@ a:hover {
 .top-svg {
   display: none;
 }
+
+#sandbox {
+  z-index: 100;
+}
