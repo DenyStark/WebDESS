@@ -423,8 +423,6 @@ $(document).ready(function () {
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
 
-    $('#resetBtn').on('click', reset);
-
     $('#delBtn').on('click', deleteCurrentPetriNet);
 
     $('#saveNetBtn').on('click', saveCurrentPetriNet);
