@@ -41,7 +41,7 @@ function newObject() {
         return;
     }
     net = null;
-    var location = getCoords($('#addObjectBtn')[0]);
+    var location = getCoords($('#add-object-btn')[0]);
     var existingNet = restorePetriNet(parsePetriNet(netOptions[0].net));
     var newObject = new PetriObject(newObjectId, 'O' + newObjectId, 'new class', existingNet, location.top + distBtwnButtonsAndSandbox, location.left);
     currentModel.objects.push(newObject);
@@ -484,10 +484,6 @@ $(document).ready(function () {
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
-
-    $('#addObjectBtn').on('click', newObject);
-
-    $('#addArcBtn').on('click', newArc);
 
     var $focusedElement;
     $(document).on('modelEdited', function () {
