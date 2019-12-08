@@ -13,7 +13,6 @@ var temporaryArrowExists = false;
 var temporaryArrowFixed = false;
 var currentModel = new PetriObjectModel(null);
 currentModel.id = newPetriObjectModelId;
-var programmingDialog;
 var net;
 
 function reset() {
@@ -312,100 +311,82 @@ function getNetById(netId) {
 }
 
 function convertToFunction() {
-    var validationResult = currentModel.validate();
-    if (!validationResult.valid) {
-        alert('Invalid Petri objects model: ' + validationResult.message);
-        return;
-    }
-    var modelName = currentModel.name || 'New';
-    var functionStr = 'function generate' + normalizeString(modelName) + 'PetriObjectModel() {\n\tvar model = new PetriObjectModel(\'' + modelName + '\');';
-    for (var i = 0; i < currentModel.objects.length; i++) {
-        var object = currentModel.objects[i];
-        var netId = object.netId;
-        functionStr += '\n\tvar net' + object.id + ' = getNetById(' + netId + ');';
-        functionStr += '\n\tvar object' + object.id + ' = new PetriObject(' + object.id + ', \'' + object.name + '\', \'' + object.className + '\', net'
-            + object.id + ', ' + object.top + ', ' + object.left + ');';
-        functionStr += '\n\tmodel.objects.push(object' + object.id + ');';
-    }
-    for (var i = 0; i < currentModel.arcs.length; i++) {
-        var arc = currentModel.arcs[i];
-        functionStr += '\n\tvar arc' + arc.id + ' = new PetriObjectArc(' + arc.id + ', object' + arc.firstObjectId + ', object' + arc.secondObjectId + ', '
-            + arc.firstObjectPlaceId + ', ' + arc.secondObjectPlaceId + ');';
-        functionStr += '\n\tmodel.arcs.push(arc' + arc.id + ');';
-    }
-    functionStr += '\n\treturn model;';
-    functionStr += '\n}';
-    $('#functionText').val(functionStr);
-    $('#functionInvocation').val('');
+    const { valid, message } = currentModel.validate();
+    if (!valid) return returnalert(`Invalid Petri objects model: ${message}`);
+
+    const name = currentModel.name || 'New';
+    let func = `function generate${normalizeString(name)}PetriObjectModel() {
+    const model = new PetriObjectModel('${name}');`;
+
+    currentModel.objects.forEach(object => {
+        const netId = object.netId;
+        func += `
+    const net${object.id} = getNetById(${netId});
+    const object${object.id} = new PetriObject(${object.id}, '${object.name}', '${object.className}', net${object.id}, ${object.top}, ${object.left});
+    model.objects.push(object${object.id});`;
+    });
+
+    currentModel.arcs.forEach(arc => {
+        func += `
+    const arc${arc.id} = new PetriObjectArc(${arc.id}, object${arc.firstObjectId}, object${arc.secondObjectId}, ${arc.firstObjectPlaceId}, ${arc.secondObjectPlaceId});
+    model.arcs.push(arc${arc.id});`;
+    });
+
+    func += `
+    return model;
+}`;
+    $('#function-text').val(func);
+    $('#function-invocation').val(`generate${normalizeString(name)}PetriObjectModel()`);
 }
 
 function generateFromFunction() {
-    var newFunction;
-    var newModel;
+    let func;
+    let net;
+    let args;
+
     try {
-        var functionText = $('#functionText').val();
-        if (!functionText) {
-            alert('Error: no function definition provided.');
-            return;
-        }
-        var functionName = parseFunctionNameFromDefinition(functionText);
-        var paramsString = parseParamsString(functionText);
-        var paramsCount = (paramsString.match(/,/g) || []).length + 1;
-        if (paramsCount === 1 && !paramsString) {
-            paramsCount = 0;
-        }
-        var functionBody = parseFunctionBody(functionText);
-        var functionInvocation = $('#functionInvocation').val();
-        if (!functionInvocation) {
-            alert('Error: no function invocation provided.');
-            return;
-        }
-        var args = parseArgumentsArray(functionInvocation);
-        if (args.length !== paramsCount) {
-            alert('Error: incorrect number of arguments supplied.');
-            return;
-        }
-        var secondFunctionName = parseFunctionNameFromInvocation(functionInvocation);
-        if (secondFunctionName !== functionName) {
-            alert('Error: different function names in the definition and invocation.');
-            return;
-        }
-        newFunction = new Function(paramsString, functionBody);
-    } catch (e) {
-        alert('Function parsing error.');
-        return;
-    }
-    try {
-        newModel = newFunction.apply(this, args);
-    } catch (e) {
-        alert('Function execution error.');
-        return;
-    }
-    if (!newModel || !newModel.getClass || newModel.getClass() !== 'PetriObjectModel') {
-        alert('Error: invalid object returned from the function.');
-        return;
-    }
-    net = null;
-    newPetriObjectModelId = randomId();
-    newModel.id = newPetriObjectModelId;
-    newObjectId = getNextElementId(newModel.objects);
-    newArcId = getNextElementId(newModel.arcs);
+        const text = $('#function-text').val();
+        if (!text) return alert('Error: no function definition provided.');
+
+        const name = parseFunctionNameFromDefinition(text);
+        const params = parseParamsString(text);
+        let paramsCount = (params.match(/,/g) || []).length + 1;
+        if (paramsCount === 1 && !params) paramsCount = 0;
+        const body = parseFunctionBody(text);
+
+        const invocation = $('#function-invocation').val();
+        if (!invocation) return alert('Error: no function invocation provided.');
+
+        args = parseArgumentsArray(invocation);
+        if (args.length !== paramsCount) return alert('Error: incorrect number of arguments supplied.');
+
+        let secondName = parseFunctionNameFromInvocation(invocation);
+        if (secondName !== name) return alert('Error: different function names in the definition and invocation.');
+
+        func = new Function(params, body);
+    } catch (e) { return alert('Function parsing error.'); }
+
+    try { net = func.apply(this, args); }
+    catch (e) { return alert('Function execution error.'); }
+
+    if (!net || !net.getClass || net.getClass() !== 'PetriObjectModel')
+        return alert('Error: invalid object returned from the function.');
+
+    net.id = randomId();
+    newObjectId = getNextElementId(net.objects);
+    newArcId = getNextElementId(net.arcs);
     temporaryArrowExists = false;
     temporaryArrowFixed = false;
-    currentModel = newModel;
+    currentModel = net;
+
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
+
     currentModel.draw();
-    programmingDialog.dialog('close');
 }
 
 function clearProgrammingPopup() {
-    $('#functionText, #functionInvocation').val('');
-}
-
-function openProgrammingPopup() {
-    clearProgrammingPopup();
-    programmingDialog.dialog('open');
+    $('#function-text, #function-invocation').val('');
 }
 
 function addMoreSimilarObjects(objectId, number) {
@@ -505,19 +486,6 @@ function editArcsForObject(objectId) {
 }
 
 $(document).ready(function () {
-    programmingDialog = $('#programmingPopup').dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        height: 560,
-        width: 560,
-        buttons: {
-            'Convert to Function': convertToFunction,
-            'Generate from Function': generateFromFunction,
-            'Clear': clearProgrammingPopup
-        }
-    });
-
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
@@ -525,8 +493,6 @@ $(document).ready(function () {
     $('#addObjectBtn').on('click', newObject);
 
     $('#addArcBtn').on('click', newArc);
-
-    $('#programmingBtn').on('click', openProgrammingPopup);
 
     $('#runBtn').on('click', runModelSimulation);
 

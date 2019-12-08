@@ -53,6 +53,7 @@
         <div id="editItemPopup" style="display: none"></div>
         <% include tabs/model/svg %>
 
+        <% include tabs/nav/code %>
         <% include tabs/model/save %>
         <% include tabs/model/open %>
         <% include tabs/model/settings %>
@@ -67,16 +68,6 @@
         <div id="addMoreObjectsPopup" title="Add More Objects of This Class" style="display: none">
             <div class="popup-line"><span class="popup-label">Number of Objects:</span><input type="number" min="1"
                     id="numOfNewObjects" /></div>
-        </div>
-        <div id="programmingPopup" title="Model - Function Transformation" style="display: none">
-            <div class="popup-line">
-                <span class="popup-label long">Function:</span>
-                <textarea id="functionText" placeholder="Function definition"></textarea>
-            </div>
-            <div class="popup-line">
-                <span class="popup-label long">Invocation:</span>
-                <textarea id="functionInvocation" placeholder="Invocation with specific arguments"></textarea>
-            </div>
         </div>
     </div>
 </body>

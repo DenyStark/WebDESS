@@ -355,8 +355,7 @@ function generateFromFunction() {
         return alert('Error: invalid object returned from the function.');
 
     cleanBuffers();
-    newPetriNetId = randomId();
-    net.id = newPetriNetId;
+    net.id = randomId();
     newPlaceId = getNextElementId(net.places);
     newTransitionId = getNextElementId(net.transitions);
     newArcId = getNextElementId(net.arcs);
