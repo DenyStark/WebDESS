@@ -28,7 +28,6 @@ function reset() {
     currentPetriNet = new PetriNet(null);
     currentPetriNet.id = newPetriNetId;
     cleanBuffers();
-    $('#netName').val('');
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 }
@@ -155,7 +154,6 @@ function buildPetri(json) {
     temporaryArrowExists = false;
     currentPetriNet = openedNet;
 
-    $('#netName').val(currentPetriNet.name);
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 
@@ -195,12 +193,6 @@ function openPetriNet() {
     });
 }
 
-function deleteCurrentPetriNet() {
-    const title = $('#netName').val();
-    if (!title) return alert('Please specify a title first.');
-    filesManager.deleteFile(title, 'Net');
-}
-
 function getCurrentModel() {
     const model = $.extend(true, {}, currentPetriNet);
 
@@ -229,10 +221,7 @@ function getCurrentModel() {
     return { model, json };
 }
 
-function saveCurrentPetriNet() {
-    const title = $('#netName').val();
-    if (!title) return alert('Please specify a title first.');
-
+function saveCurrentPetriNet(title) {
     currentPetriNet.name = title;
     const { valid, message } = currentPetriNet.validate();
     if (!valid) return alert(`Invalid Petri net: ${message}`);
@@ -407,7 +396,6 @@ function generateFromFunction() {
     temporaryArrowExists = false;
     currentPetriNet = net;
 
-    $('#netName').val(currentPetriNet.name);
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 
@@ -422,10 +410,6 @@ $(document).ready(function () {
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
-
-    $('#delBtn').on('click', deleteCurrentPetriNet);
-
-    $('#saveNetBtn').on('click', saveCurrentPetriNet);
 
     $('#openNetBtn').on('click', openPetriNet);
 
