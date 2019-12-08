@@ -1,5 +1,9 @@
 html,body {
   height: 100%;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 a {
@@ -50,6 +54,98 @@ a:hover {
 
 .top-svg {
   display: none;
+}
+
+.petri-place {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: url('../images/place.png') no-repeat center center;
+}
+
+.petri-place:hover {
+  cursor: pointer;
+  background: url('../images/place-hovered.png') no-repeat center center;
+}
+
+.petri-object {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: url('../images/petri-object.png') no-repeat center center;
+}
+
+.petri-object:hover {
+  cursor: pointer;
+  background: url('../images/petri-object-hovered.png') no-repeat center center;
+}
+
+.item-name {
+  position: relative;
+  height: 18px;
+  top: -18px;
+  left: 0;
+  overflow-x: visible;
+  text-align: center;
+  margin: 0 -100%;
+  white-space: nowrap;
+  cursor: default;
+}
+
+:hover .item-name {
+  cursor: default;
+}
+
+.marker {
+  position: relative;
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background-color: black;
+  border-radius: 5px;
+  margin: 0 3px 3px 0;
+}
+
+.markers {
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  width: 50px;
+  text-align: center;
+}
+
+.marker.animation-marker {
+  position: absolute;
+}
+
+.petri-transition {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: url('../images/transition.png') no-repeat center center;
+  background-size: contain;
+}
+
+.petri-transition:hover {
+  cursor: pointer;
+  background: url('../images/transition-hovered.png') no-repeat center center;
+  background-size: contain;
+}
+
+.item-notes {
+  position: relative;
+  height: 18px;
+  bottom: -34px;
+  left: 0;
+  overflow-x: visible;
+  text-align: center;
+  margin: 0 -100%;
+  white-space: nowrap;
+  cursor: default;
+}
+
+:hover .item-notes {
+  cursor: default;
 }
 
 #sandbox > div {
