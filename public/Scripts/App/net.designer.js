@@ -8,7 +8,6 @@ var distBtwnButtonsAndSandbox = 58;
 var temporaryArrowExists = false;
 var currentPetriNet = new PetriNet(null);
 currentPetriNet.id = newPetriNetId;
-var programmingDialog, animationSettingsDialog;
 var needToStop;
 var net;
 
@@ -29,7 +28,6 @@ function reset() {
     currentPetriNet = new PetriNet(null);
     currentPetriNet.id = newPetriNetId;
     cleanBuffers();
-    $('#netName').val('');
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 }
@@ -43,7 +41,7 @@ function createMouseDownEvent(buttonLocation) {
 
 function newPlace() {
     cleanBuffers();
-    var location = getCoords($('#addPlaceBtn')[0]);
+    var location = getCoords($('#add-place-btn')[0]);
     var newPlace = new Place(newPlaceId, 'P' + newPlaceId, 0, location.top + distBtwnButtonsAndSandbox, location.left);
     currentPetriNet.places.push(newPlace);
     newPlace.draw();
@@ -53,7 +51,7 @@ function newPlace() {
 
 function newTransition() {
     cleanBuffers();
-    var location = getCoords($('#addTransitionBtn')[0]);
+    var location = getCoords($('#add-transition-btn')[0]);
     var newTransition = new Transition(newTransitionId, 'T' + newTransitionId, 0, 0, null, 0, 1, 'Infinity', location.top + distBtwnButtonsAndSandbox, location.left);
     currentPetriNet.transitions.push(newTransition);
     newTransition.draw();
@@ -61,17 +59,14 @@ function newTransition() {
     newTransitionId++;
 }
 
-function drawTemporaryArrow(xPos, yPos) {
-    var xShift = $('.nav-menu').outerWidth();
-    var yShift = $('.controls-area').outerHeight();
+function drawTemporaryArrow(x, y) {
     temporaryArrowExists = true;
-    var arrowSvg = '<svg class="temp-arrow"><path class="arrow-path" d="" style="stroke:black; stroke-width: 1.25px; fill: none; '
-        + 'marker-end: url(#temporaryArrow);"/></svg>';
-    $('.top-svg')
-        .show()
-        .append(arrowSvg);
-    var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
-    arrowPath.setAttribute("d", "M" + (xPos - xShift) + "," + (yPos - yShift) + " L" + (xPos - xShift) + "," + (yPos - yShift));
+    const arrow = `
+        <svg class="temp-arrow">
+            <path class="arrow-path" d="" style="stroke:black; stroke-width: 1.25px; fill: none; marker-end: url(#temporaryArrow);"/>
+        </svg>`;
+    $('.top-svg').show().append(arrow);
+    $('.temp-arrow').find('.arrow-path')[0].setAttribute('d', `M${x},${y} L${x},${y}`);
 }
 
 function removeTemporaryArrow() {
@@ -137,13 +132,10 @@ function newArc() {
 
 function redrawTemporaryArrowIfNecessary(e) {
     if (temporaryArrowExists) {
-        var xShift = $('.nav-menu').outerWidth();
-        var yShift = $('.controls-area').outerHeight();
-        var arrowPath = $('.temp-arrow').find('.arrow-path')[0];
-        var dAttrOldValue = arrowPath.getAttribute('d');
-        var indexOfL = dAttrOldValue.indexOf('L');
-        var dAttrNewValue = dAttrOldValue.substr(0, indexOfL + 1) + (e.pageX - xShift) + "," + (e.pageY - yShift);
-        arrowPath.setAttribute('d', dAttrNewValue);
+        const arrow = $('.temp-arrow').find('.arrow-path')[0];
+        const oldD = arrow.getAttribute('d');
+        const newD = `${oldD.slice(0, oldD.indexOf('L'))}L${e.pageX},${e.pageY}`;
+        arrow.setAttribute('d', newD);
     }
 }
 
@@ -162,50 +154,10 @@ function buildPetri(json) {
     temporaryArrowExists = false;
     currentPetriNet = openedNet;
 
-    $('#netName').val(currentPetriNet.name);
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 
     currentPetriNet.draw();
-}
-
-function openPetriNet() {
-    const list = filesManager.loadList('Net');
-    if (list.length === 0) return alert('List is empty.');
-
-    const $select = $('#openNetSelect');
-    let selectHtml = '';
-
-    for (const { title, date } of list) {
-        const displayText = `${title} (${date})`;
-        selectHtml += `<option value="${title}">${displayText}</option>`;
-    }
-
-    $select.html(selectHtml);
-    const dialog = $('#openNetPopup').dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: 124,
-        width: 292,
-        buttons: {
-            'Cancel': () => dialog.dialog('close'),
-            'Ok': () => {
-                const title = $select.val();
-                const { data } = filesManager.loadFile(title, 'Net');
-                buildPetri(JSON.stringify(data));
-                cleanBuffers();
-                dialog.dialog("close");
-            }
-        },
-        close: () => dialog.dialog('destroy'),
-    });
-}
-
-function deleteCurrentPetriNet() {
-    const title = $('#netName').val();
-    if (!title) return alert('Please specify a title first.');
-    filesManager.deleteFile(title, 'Net');
 }
 
 function getCurrentModel() {
@@ -236,10 +188,7 @@ function getCurrentModel() {
     return { model, json };
 }
 
-function saveCurrentPetriNet() {
-    const title = $('#netName').val();
-    if (!title) return alert('Please specify a title first.');
-
+function saveCurrentPetriNet(title) {
     currentPetriNet.name = title;
     const { valid, message } = currentPetriNet.validate();
     if (!valid) return alert(`Invalid Petri net: ${message}`);
@@ -251,37 +200,13 @@ function saveCurrentPetriNet() {
 }
 
 function runNetModelSimulation() {
-    var netValidationResult = currentPetriNet.validate();
-    if (!netValidationResult.valid) {
-        alert('Invalid Petri net: ' + netValidationResult.message);
-        return;
-    }
-    if (currentPetriNet.hasParameters()) {
-        alert('Petri Net has parameters. Please provide specific values for them first.');
-        return;
-    }
-    var durationStr = $('#simulationDuration').val();
-    if (!durationStr || Math.floor(durationStr) != durationStr || !$.isNumeric(durationStr) || parseInt(durationStr) < 1) {
-        alert('Simulation duration must be a positive integer.');
-        return;
-    }
-    var duration = parseInt(durationStr);
-    var animDurStr = $('#animationDuration').val();
-    if (!animDurStr || Math.floor(animDurStr) != animDurStr || !$.isNumeric(animDurStr) || parseInt(animDurStr) < 10) {
-        alert('Animation duration must be a positive integer no less than 10.');
-        return;
-    }
-    var animationDuration = parseInt(animDurStr);
-    var cuDurStr = $('#cuDuration').val();
-    if (!cuDurStr || Math.floor(cuDurStr) != cuDurStr || !$.isNumeric(cuDurStr) || parseInt(cuDurStr) < 10) {
-        alert('C.u. duration must be a positive integer no less than 10.');
-        return;
-    }
-    var cuDuration = parseInt(cuDurStr);
-    var enableAnimation = $('#enableAnimationChbx').is(':checked');
-    setTimeout(function () {
-        runSimulationForNet(currentPetriNet, duration, animationDuration, cuDuration, enableAnimation);
-    }, 0);
+    const { valid,message } = currentPetriNet.validate();
+    if (!valid) return alert(`Invalid Petri net: ${message}`);
+
+    if (currentPetriNet.hasParameters())
+        return alert('Petri Net has parameters. Please provide specific values for them first.');
+
+    runSimulationForNet(currentPetriNet);
 }
 
 function deleteArc(id) {
@@ -358,164 +283,99 @@ function deletePlace(id) {
 }
 
 function convertToFunction() {
-    var netValidationResult = currentPetriNet.validate();
-    if (!netValidationResult.valid) {
-        alert('Invalid Petri net: ' + netValidationResult.message);
-        return;
+    const { valid, message } = currentPetriNet.validate();
+    if (!valid) return alert(`Invalid Petri net: ${message}`);
+
+    const name = currentPetriNet.name || 'New';
+    let func = `function generate${normalizeString(name)}PetriNet() {
+    const net = new PetriNet('${name}');
+    `;
+
+    for (const place of currentPetriNet.places) func += `
+    const place${place.id} = new Place(${place.id}, '${place.name}', ${place.markers}, ${place.top}, ${place.left});
+    net.places.push(place${place.id});
+    `;
+
+    for (const transition of currentPetriNet.transitions) {
+        const distribution = transition.distribution ? `'${transition.distribution}'` : 'null';
+        func += `
+    const transition${transition.id} = new Transition(${transition.id}, '${transition.name}', ${transition.delay}, ${transition.deviation}, ${distribution}, ${transition.priority}, ${transition.probability}, ${transition.channels}, ${transition.top}, ${transition.left});
+    net.transitions.push(transition${transition.id});
+    `;
     }
-    var netName = currentPetriNet.name || 'New';
-    var functionStr = 'function generate' + normalizeString(netName) + 'PetriNet() {\n\tvar net = new PetriNet(\'' + netName + '\');';
-    for (var i = 0; i < currentPetriNet.places.length; i++) {
-        var place = currentPetriNet.places[i];
-        functionStr += '\n\tvar place' + place.id + ' = new Place(' + place.id + ', \'' + place.name + '\', ' + place.markers + ', ' + place.top + ', '
-            + place.left + ');';
-        functionStr += '\n\tnet.places.push(place' + place.id + ');';
+
+    for (const arc of currentPetriNet.arcs) {
+        const fromPlace = arc.fromPlace ? 'true' : 'false';
+        const infLink = arc.isInformationLink ? 'true' : 'false';
+        func += `
+    const arc${arc.id} = new Arc(${arc.id}, place${arc.placeId}, transition${arc.transitionId}, ${fromPlace}, ${arc.channels}, ${infLink});
+    net.arcs.push(arc${arc.id});
+    `;
     }
-    for (var i = 0; i < currentPetriNet.transitions.length; i++) {
-        var transition = currentPetriNet.transitions[i];
-        var distributionStr = transition.distribution
-            ? ('\'' + transition.distribution + '\'')
-            : 'null';
-        functionStr += '\n\tvar transition' + transition.id + ' = new Transition(' + transition.id + ', \'' + transition.name + '\', ' + transition.delay + ', '
-            + transition.deviation + ', ' + distributionStr + ', ' + transition.priority + ', ' + transition.probability + ', ' + transition.channels + ', '
-            + transition.top + ', ' + transition.left + ');';
-        functionStr += '\n\tnet.transitions.push(transition' + transition.id + ');';
-    }
-    for (var i = 0; i < currentPetriNet.arcs.length; i++) {
-        var arc = currentPetriNet.arcs[i];
-        var fromPlaceStr = arc.fromPlace ? 'true' : 'false';
-        var infLinkStr = arc.isInformationLink ? 'true' : 'false';
-        functionStr += '\n\tvar arc' + arc.id + ' = new Arc(' + arc.id + ', place' + arc.placeId + ', transition' + arc.transitionId + ', ' + fromPlaceStr +
-            ', ' + arc.channels + ', ' + infLinkStr + ');';
-        functionStr += '\n\tnet.arcs.push(arc' + arc.id + ');';
-    }
-    functionStr += '\n\treturn net;';
-    functionStr += '\n}';
-    $('#functionText').val(functionStr);
-    $('#functionInvocation').val('');
+
+    func += `
+    return net;
+}`;
+
+    $('#function-text').val(func);
+    $('#function-invocation').val(`generate${normalizeString(name)}PetriNet()`);
 }
 
 function generateFromFunction() {
-    var newFunction;
-    var newNet;
+    let func;
+    let net;
+    let args;
+
     try {
-        var functionText = $('#functionText').val();
-        if (!functionText) {
-            alert('Error: no function definition provided.');
-            return;
-        }
-        var functionName = parseFunctionNameFromDefinition(functionText);
-        var paramsString = parseParamsString(functionText);
-        var paramsCount = (paramsString.match(/,/g) || []).length + 1;
-        if (paramsCount === 1 && !paramsString) {
-            paramsCount = 0;
-        }
-        var functionBody = parseFunctionBody(functionText);
-        var functionInvocation = $('#functionInvocation').val();
-        if (!functionInvocation) {
-            alert('Error: no function invocation provided.');
-            return;
-        }
-        var args = parseArgumentsArray(functionInvocation);
-        if (args.length !== paramsCount) {
-            alert('Error: incorrect number of arguments supplied.');
-            return;
-        }
-        var secondFunctionName = parseFunctionNameFromInvocation(functionInvocation);
-        if (secondFunctionName !== functionName) {
-            alert('Error: different function names in the definition and invocation.');
-            return;
-        }
-        newFunction = new Function(paramsString, functionBody);
-    } catch (e) {
-        alert('Function parsing error.');
-        return;
-    }
-    try {
-        newNet = newFunction.apply(this, args);
-    } catch (e) {
-        alert('Function execution error.');
-        return;
-    }
-    if (!newNet || !newNet.getClass || newNet.getClass() !== 'PetriNet') {
-        alert('Error: invalid object returned from the function.');
-        return;
-    }
+        const text = $('#function-text').val();
+        if (!text) return alert('Error: no function definition provided.');
+
+        const name = parseFunctionNameFromDefinition(text);
+        const params = parseParamsString(text);
+        let paramsCount = (params.match(/,/g) || []).length + 1;
+        if (paramsCount === 1 && !params) paramsCount = 0;
+        const body = parseFunctionBody(text);
+
+        const invocation = $('#function-invocation').val();
+        if (!invocation) return alert('Error: no function invocation provided.');
+
+        args = parseArgumentsArray(invocation);
+        if (args.length !== paramsCount) return alert('Error: incorrect number of arguments supplied.');
+
+        let secondName = parseFunctionNameFromInvocation(invocation);
+        if (secondName !== name) return alert('Error: different function names in the definition and invocation.');
+
+        func = new Function(params, body);
+    } catch (e) { return alert('Function parsing error.'); }
+
+    try { net = func.apply(this, args); }
+    catch (e) { return alert('Function execution error.'); }
+
+    if (!net || !net.getClass || net.getClass() !== 'PetriNet')
+        return alert('Error: invalid object returned from the function.');
+
     cleanBuffers();
-    newPetriNetId = randomId();
-    newNet.id = newPetriNetId;
-    newPlaceId = getNextElementId(newNet.places);
-    newTransitionId = getNextElementId(newNet.transitions);
-    newArcId = getNextElementId(newNet.arcs);
+    net.id = randomId();
+    newPlaceId = getNextElementId(net.places);
+    newTransitionId = getNextElementId(net.transitions);
+    newArcId = getNextElementId(net.arcs);
     temporaryArrowExists = false;
-    currentPetriNet = newNet;
-    $('#netName').val(currentPetriNet.name);
+    currentPetriNet = net;
+
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
+
     currentPetriNet.draw();
-    programmingDialog.dialog('close');
 }
 
 function clearProgrammingPopup() {
-    $('#functionText, #functionInvocation').val('');
-}
-
-function openProgrammingPopup() {
-    clearProgrammingPopup();
-    programmingDialog.dialog('open');
-}
-
-function openAnimationSettings() {
-    animationSettingsDialog.dialog('open');
+    $('#function-text, #function-invocation').val('');
 }
 
 $(document).ready(function () {
-    programmingDialog = $('#programmingPopup').dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        height: 560,
-        width: 560,
-        buttons: {
-            'Convert to Function': convertToFunction,
-            'Generate from Function': generateFromFunction,
-            'Clear': clearProgrammingPopup
-        }
-    });
-
-    animationSettingsDialog = $('#animationSettingsPopup').dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        width: 296,
-        height: 112
-    });
-
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
-
-    $('#addPlaceBtn').on('click', newPlace);
-
-    $('#addTransitionBtn').on('click', newTransition);
-
-    $('#addArcBtn').on('click', newArc);
-
-    $('#resetBtn').on('click', reset);
-
-    $('#delBtn').on('click', deleteCurrentPetriNet);
-
-    $('#saveNetBtn').on('click', saveCurrentPetriNet);
-
-    $('#openNetBtn').on('click', openPetriNet);
-
-    $('#programmingBtn').on('click', openProgrammingPopup);
-
-    $('#runBtn').on('click', runNetModelSimulation);
-
-    $('#stopBtn').on('click', requestStop);
-
-    $('#animationSettingsBtn').on('click', openAnimationSettings);
 
     var $focusedElement;
     $(document).on('netEdited', cleanBuffers);

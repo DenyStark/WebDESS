@@ -1,14 +1,15 @@
-var duration;
+let withAnimation = false;
+let duration = 1000;
+let animationDuration = 1000;
+let cuDuration = 1000;
+
 var currentTime;
 var nextEvents;
 var nextTime;
 var activeTransitions;
 var allDelaysAreZero;
-var animationDuration;
-var cuDuration;
 var animationMarkersCount;
 var stepsCount;
-var withAnimation;
 var startTime;
 
 function prepareStatsArea() {
@@ -33,14 +34,14 @@ function prepareStatsArea() {
     $('span.stats-line-title').each(function () {
         $(this).attr('title', $(this).text());
     });
-    $(document).tooltip();
+    // $(document).tooltip();
 }
 
 function finalizeStats() {
     $('span.stats-value').each(function () {
         $(this).attr('title', $(this).text());
     });
-    $(document).tooltip();
+    // $(document).tooltip();
 }
 
 function updateStatsForTransitions(displayChanges, isLastUpdate, prevTime, nextTime) {
@@ -342,7 +343,7 @@ function performFinalActions() {
         }
     }
     $('.stats').append('<div class="stats-title">Time elapsed: ' + getTimeString(endTime - startTime) + '</div>');
-    $('.disabled-button').removeClass('disabled-button');
+    $('.btn-disabled').removeClass('btn-disabled');
 }
 
 function makeStepWithAnimation() {
@@ -418,7 +419,7 @@ function makeSteps() {
     performFinalActions();
 }
 
-function runSimulationForNet(currentNet, simulationDuration, durationOfEachAnimation, unitDuration, enableAnimation) {
+function runSimulationForNet(currentNet) {
     net = currentNet;
     for (var k = 0; k < net.transitions.length; k++) {
         var transition = net.transitions[k];
@@ -432,16 +433,14 @@ function runSimulationForNet(currentNet, simulationDuration, durationOfEachAnima
         place.stats = {};
     }
     allDelaysAreZero = net.allDelaysAreZero();
-    duration = simulationDuration;
-    animationDuration = durationOfEachAnimation;
-    cuDuration = unitDuration;
-    withAnimation = enableAnimation;
     currentTime = 0;
     stepsCount = 0;
     needToStop = false;
-    var buttonsToDisableSelector = withAnimation ? 'button:not(#stopBtn)' : 'button';
-    $(buttonsToDisableSelector).addClass('disabled-button');
+
+    $(withAnimation ? 'button:not(#stop-btn)' : 'button').addClass('btn-disabled');
+
     $('.stats').html('');
+
     if (withAnimation) {
         prepareStatsArea();
         startTime = (new Date()).getTime();

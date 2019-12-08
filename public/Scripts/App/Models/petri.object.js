@@ -232,10 +232,6 @@ PetriObject.prototype.openEditPopup = function () {
                 self.name = name;
                 self.className = className;
                 self.redraw();
-                if (needToEditArcs) {
-                    $('.nav-menu').append('<div class="hidden edit-object-arcs" data-id="' + self.id + '"></div>');
-                    $('.edit-object-arcs').trigger('click');
-                }
             }
         },
         close: function () {
