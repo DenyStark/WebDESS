@@ -570,8 +570,6 @@ $(document).ready(function () {
 
     $('#addArcBtn').on('click', newArc);
 
-    $('#resetBtn').on('click', reset);
-
     $('#delBtn').on('click', deleteCurrentModel);
 
     $('#saveModelBtn').on('click', saveCurrentModel);
