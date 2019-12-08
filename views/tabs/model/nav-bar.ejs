@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark z-10" id="navbar">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="navbar-item dropdown">
+        <a class="navbar-brand dropdown-toggle" href="/" id="navbar-dropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">WebDESS MODEL</a>
+        <div class="dropdown-menu" aria-labelledby="navbar-dropdown">
+          <a class="dropdown-item" href="/">WebDESS NET</a>
+        </div>
+      </li>
+    </ul>
+
+    <div class="control-item">
+        <span>Add: </span>
+        <button id="addObjectBtn">Petri Object</button>
+        <button id="addArcBtn">Arc</button>
+    </div>
+    <div class="control-item">
+        <span>Save as: </span>
+        <input type="text" id="modelName" />
+        <button id="saveModelBtn">Save</button>
+        <button id="openModelBtn">Open</button>
+        <button id="delBtn">Delete</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+    <div class="control-item">
+        <button id="programmingBtn">Programming</button>
+    </div>
+    <div class="control-item">
+        <span>Simulation duration (c.u.): </span>
+        <input class="short-input" type="number" id="simulationDuration" min="1" value="1000" />
+        <button id="runBtn">Run</button>
+    </div>
+  </div>
+</nav>
