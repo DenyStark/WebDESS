@@ -24,7 +24,7 @@
 
 <script>
   function buildList() {
-    const list = filesManager.loadList('Net');
+    const list = filesManager.loadList('Model');
 
     $('#files-list-table').empty();
     list.forEach((e, i) => {
@@ -38,15 +38,13 @@
   }
 
   function openItem(title) {
-    const { data } = filesManager.loadFile(title, 'Net');
+    const { data } = filesManager.loadFile(title, 'Model');
     buildPetri(JSON.stringify(data));
-    cleanBuffers();
-
     $('#open-mod').modal('hide');
   }
 
   function deleteItem(title) {
-    filesManager.deleteFile(title, 'Net');
+    filesManager.deleteFile(title, 'Model');
     buildList();
   }
 

@@ -53,11 +53,10 @@
         <div id="editItemPopup" style="display: none"></div>
         <% include tabs/model/svg %>
 
+        <% include tabs/model/save %>
+        <% include tabs/model/open %>
         <% include tabs/model/settings %>
 
-        <div id="openModelPopup" title="Open a Model" style="display: none">
-            <div class="popup-line"><span class="popup-label">Model:</span><select id="openModelSelect"></select></div>
-        </div>
         <div id="defineArcPopup" title="Define an Arc" style="display: none">
             <div class="popup-line"><span class="popup-label">Place (net: <span
                         id="firstNetName"></span>):</span><select id="placeFirstNet"></select></div>

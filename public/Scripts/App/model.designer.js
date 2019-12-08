@@ -24,7 +24,6 @@ function reset() {
     currentModel = new PetriObjectModel(null);
     currentModel.id = newPetriObjectModelId;
     net = null;
-    $('#modelName').val('');
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 }
@@ -221,49 +220,10 @@ function buildPetri(json) {
     temporaryArrowFixed = false;
     currentModel = openedModel;
 
-    $('#modelName').val(currentModel.name);
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
 
     currentModel.draw();
-}
-
-function openModel() {
-    const list = filesManager.loadList('Model');
-    if (list.length === 0) return alert('List is empty.');
-
-    const $select = $('#openModelSelect');
-    let selectHtml = '';
-
-    for (const { title, date } of list) {
-        const displayText = `${title} (${date})`;
-        selectHtml += `<option value="${title}">${displayText}</option>`;
-    }
-
-    $select.html(selectHtml);
-    const dialog = $('#openModelPopup').dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: 124,
-        width: 292,
-        buttons: {
-            'Cancel': () => dialog.dialog('close'),
-            'Ok': () => {
-                const title = $select.val();
-                const { data } = filesManager.loadFile(title, 'Model');
-                buildPetri(JSON.stringify(data));
-                dialog.dialog("close");
-            }
-        },
-        close: () => dialog.dialog('destroy'),
-    });
-}
-
-function deleteCurrentModel() {
-    const title = $('#modelName').val();
-    if (!title) return alert('Please specify a title first.');
-    filesManager.deleteFile(title, 'Model');
 }
 
 function getCurrentModel() {
@@ -279,10 +239,7 @@ function getCurrentModel() {
     return { model, json: JSON.stringify(model) };
 }
 
-function saveCurrentModel() {
-    const title = $('#modelName').val();
-    if (!title) return alert('Please specify a title first.');
-
+function saveCurrentModel(title) {
     currentModel.name = title;
     const { valid, message } = currentModel.validate();
     if (!valid) return alert(`Invalid Petri objects model: ${message}`);
@@ -436,7 +393,6 @@ function generateFromFunction() {
     temporaryArrowExists = false;
     temporaryArrowFixed = false;
     currentModel = newModel;
-    $('#modelName').val(currentModel.name);
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
     $('.stats').html('');
     currentModel.draw();
@@ -569,12 +525,6 @@ $(document).ready(function () {
     $('#addObjectBtn').on('click', newObject);
 
     $('#addArcBtn').on('click', newArc);
-
-    $('#delBtn').on('click', deleteCurrentModel);
-
-    $('#saveModelBtn').on('click', saveCurrentModel);
-
-    $('#openModelBtn').on('click', openModel);
 
     $('#programmingBtn').on('click', openProgrammingPopup);
 
