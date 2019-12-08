@@ -1,4 +1,5 @@
-var duration;
+let duration = 1000;
+
 var currentTime;
 var nextEvents;
 var nextTime;
@@ -238,8 +239,7 @@ function makeSteps() {
     performFinalActions();
 }
 
-function runSimulationForModel(currentPetriObjectModel, simulationDuration) {
-    duration = simulationDuration;
+function runSimulationForModel(currentPetriObjectModel) {
     currentTime = 0;
     stepsCount = 0;
     if (!currentPetriObjectModel.equalPlacesHaveEqualNumberOfMarkers()) {
