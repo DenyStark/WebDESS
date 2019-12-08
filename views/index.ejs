@@ -35,7 +35,7 @@
 
 <body>
   <div class="container-full d-flex flex-column h-100 p-0">
-    <% include tabs/nav-bar %>
+    <% include tabs/nav/nav-bar %>
 
     <div class="row flex-fill m-0">
       <div class="sandbox flex-grow-1 m-0" id="sandbox"></div>
@@ -47,17 +47,12 @@
 
     <div id="editItemPopup" style="display: none"></div>
 
-    <% include tabs/code %>
-    <% include tabs/svg %>
-    <% include tabs/save %>
-    <% include tabs/open %>
-    <% include tabs/settings %>
+    <% include tabs/nav/code %>
+    <% include tabs/nav/svg %>
+    <% include tabs/nav/save %>
+    <% include tabs/nav/open %>
+    <% include tabs/nav/settings %>
   </div>
 </body>
-
-<script>
-  $('#navbarDropdown').html('WebDESS NET');
-  $('[aria-labelledby="navbarDropdown"]').html('<a class="dropdown-item" href="/model">WebDESS MODEL</a>');
-</script>
 
 </html>
