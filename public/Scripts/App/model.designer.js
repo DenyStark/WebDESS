@@ -249,18 +249,13 @@ function saveCurrentModel(title) {
 }
 
 function runModelSimulation() {
-    var validationResult = currentModel.validate();
-    if (!validationResult.valid) {
-        alert('Invalid Petri objects model: ' + validationResult.message);
-        return;
-    }
-    if (currentModel.hasParameters()) {
-        alert('Petri objects model has parameters. Please provide specific values for them first.');
-        return;
-    }
-    setTimeout(function () {
-        runSimulationForModel(currentModel);
-    }, 0);
+    const { valid, message } = currentModel.validate();
+    if (!valid) return alert(`Invalid Petri objects model: ${message}`);
+
+    if (currentModel.hasParameters())
+        return alert('Petri objects model has parameters. Please provide specific values for them first.');
+
+    runSimulationForModel(currentModel);
 }
 
 function deleteArc(id) {
@@ -493,8 +488,6 @@ $(document).ready(function () {
     $('#addObjectBtn').on('click', newObject);
 
     $('#addArcBtn').on('click', newArc);
-
-    $('#runBtn').on('click', runModelSimulation);
 
     var $focusedElement;
     $(document).on('modelEdited', function () {
