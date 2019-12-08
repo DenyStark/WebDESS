@@ -160,39 +160,6 @@ function buildPetri(json) {
     currentPetriNet.draw();
 }
 
-function openPetriNet() {
-    const list = filesManager.loadList('Net');
-    if (list.length === 0) return alert('List is empty.');
-
-    const $select = $('#openNetSelect');
-    let selectHtml = '';
-
-    for (const { title, date } of list) {
-        const displayText = `${title} (${date})`;
-        selectHtml += `<option value="${title}">${displayText}</option>`;
-    }
-
-    $select.html(selectHtml);
-    const dialog = $('#openNetPopup').dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: 124,
-        width: 292,
-        buttons: {
-            'Cancel': () => dialog.dialog('close'),
-            'Ok': () => {
-                const title = $select.val();
-                const { data } = filesManager.loadFile(title, 'Net');
-                buildPetri(JSON.stringify(data));
-                cleanBuffers();
-                dialog.dialog("close");
-            }
-        },
-        close: () => dialog.dialog('destroy'),
-    });
-}
-
 function getCurrentModel() {
     const model = $.extend(true, {}, currentPetriNet);
 
@@ -410,8 +377,6 @@ $(document).ready(function () {
     allowDragAndDrop = true;
 
     $(document).on('mousemove', redrawTemporaryArrowIfNecessary);
-
-    $('#openNetBtn').on('click', openPetriNet);
 
     var $focusedElement;
     $(document).on('netEdited', cleanBuffers);

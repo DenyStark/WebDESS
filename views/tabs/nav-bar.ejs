@@ -22,12 +22,6 @@
       <div class="small text-center text-white m-0">Add new item</div>
     </div>
 
-    <!-- TODO: refactor this -->
-    <div class="control-item">
-      <button id="openNetBtn">Open</button>
-    </div>
-    <!--  -->
-
     <div class="mx-3 text-center">
       <button class="btn-main" onclick="runNetModelSimulation()"><i class="fas fa-play"></i></button>
       <button class="btn-main" id="stop-btn" onclick="requestStop()"><i class="fas fa-stop"></i></button>
@@ -40,8 +34,8 @@
     </div>
 
     <div class="mx-3 text-center">
-      <button class="btn-main" data-toggle="modal" data-target="#save-mod"><i class="fas fa-file-upload"></i></button>
-      <button class="btn-main" onclick=""><i class="fas fa-file-download"></i></button>
+      <button class="btn-main" data-toggle="modal" data-target="#save-mod"><i class="fas fa-save"></i></button>
+      <button class="btn-main" data-toggle="modal" data-target="#open-mod"><i class="fas fa-folder-open"></i></button>
       <div class="small text-white m-0">Files manager</div>
     </div>
 
