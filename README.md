@@ -1,5 +1,5 @@
 # WebDESS
-v0.1.10 Dec 2, 2019
+v0.2.0 Dec 8, 2019
 
 Petri chart modeling tool.
 
