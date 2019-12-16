@@ -41,56 +41,6 @@ Place.prototype.setMarkersParam = function (paramName) {
     }
 };
 
-Place.prototype.openEditPopup = function () {
-    var self = this;
-
-    var $popup = $('#editItemPopup');
-    $popup.attr('title', 'Edit a Place');
-
-    var popupHtml = '<div class="popup-line"><span class="popup-label">Name:</span><input type="text" id="nameInput" value="' + self.name + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Number of Markers:</span><input type="number" min="0" id="markersInput" value="'
-        + self.markers + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Markers):</span><input type="text" id="markersParamNameInput" value="'
-        + (self.markersParamName || '') + '" /></div>';
-    $popup.html(popupHtml);
-
-    var dialog = $popup.dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: 190,
-        width: 292,
-        buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                $(document).trigger('netEdited');
-                var markersStr = $('#markersInput').val();
-                if (!markersStr || Math.floor(markersStr) != markersStr || !$.isNumeric(markersStr) || parseInt(markersStr) < 0) {
-                    alert('The number of markers must be a positive integer or zero.');
-                    return;
-                }
-                var name = $('#nameInput').val();
-                if (!name) {
-                    alert('Place name cannot be empty.');
-                    return;
-                }
-                var markers = parseInt(markersStr);
-                var markersParamName = $('#markersParamNameInput').val();
-                dialog.dialog("close");
-                self.markers = markers;
-                self.setMarkersParam(markersParamName);
-                self.name = name;
-                self.redraw();
-            }
-        },
-        close: function () {
-            dialog.dialog('destroy');
-        }
-    });
-};
-
 Place.prototype.drawMarkers = function ($elem) {
     var self = this;
 
@@ -167,6 +117,7 @@ Place.prototype.draw = function () {
     enableDragAndDrop(elemId, self);
 
     $('#' + elemId).on('dblclick', function () {
-        self.openEditPopup();
+        $('#place-edit').modal('show');
+        openPlaceEdit(self);
     });
 };
