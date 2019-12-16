@@ -170,129 +170,6 @@ Transition.prototype.getDistributionString = function () {
     }
 };
 
-Transition.prototype.openEditPopup = function () {
-    var self = this;
-
-    var $popup = $('#editItemPopup');
-    $popup.attr('title', 'Edit a Transition');
-
-    var popupHtml = '<div class="popup-line"><span class="popup-label">Name:</span><input type="text" id="nameInput" value="' + self.name + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Number of Channels:</span><input type="text" id="channelsInput" value="'
-        + self.channels + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Channels):</span><input type="text" id="channelsParamNameInput" value="'
-        + (self.channelsParamName || '') + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Priority:</span><input type="number" min="0" id="priorityInput" value="'
-        + self.priority + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Priority):</span><input type="text" id="priorityParamNameInput" value="'
-        + (self.priorityParamName || '') + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Probability:</span><input type="number" step="0.01" min="0" max="1" '
-        + 'id="probabilityInput" value="' + self.probability + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Probability):</span><input type="text" id="probabilityParamNameInput" value="'
-        + (self.probabilityParamName || '') + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Delay:</span><input type="number" step="0.01" min="0" id="delayInput" value="'
-        + self.delay + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Delay):</span><input type="text" id="delayParamNameInput" value="'
-        + (self.delayParamName || '') + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Delay St. Deviation:</span><input type="number" step="0.01" min="0" '
-        + 'id="deviationInput" value="' + self.deviation + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Delay St. D.):</span><input type="text" id="deviationParamNameInput" value="'
-        + (self.deviationParamName || '') + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Distribution:</span><select id="distributionInput">';
-    $.each(self.distributionOptions, function (o, option) {
-        var optionValue = option === 'none' ? null : option;
-        var selectedHtml = self.distribution === optionValue ? ' selected="selected"' : '';
-        popupHtml += '<option value="' + optionValue + '"' + selectedHtml + '>' + option + '</option>';
-    });
-    popupHtml += '</select></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Distribution):</span><input type="text" id="distributionParamNameInput" value="'
-        + (self.distributionParamName || '') + '" /></div>';
-    $popup.html(popupHtml);
-
-    var dialog = $popup.dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: 532,
-        width: 292,
-        buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                $(document).trigger('netEdited');
-                var priorityStr = $('#priorityInput').val();
-                if (!priorityStr || Math.floor(priorityStr) != priorityStr || !$.isNumeric(priorityStr) || parseInt(priorityStr) < 0) {
-                    alert('Priority must be a positive integer or zero.');
-                    return;
-                }
-                var priority = parseInt(priorityStr);
-                var probabilityStr = $('#probabilityInput').val();
-                if (!probabilityStr || !$.isNumeric(probabilityStr) || parseFloat(probabilityStr) < 0 || parseFloat(probabilityStr) > 1) {
-                    alert('Probability must be a decimal between 0 and 1.');
-                    return;
-                }
-                var probability = parseFloat(probabilityStr);
-                var delayStr = $('#delayInput').val();
-                if (!delayStr || !$.isNumeric(delayStr) || parseFloat(delayStr) < 0) {
-                    alert('Delay must be a positive decimal or zero.');
-                    return;
-                }
-                var delay = parseFloat(delayStr);
-                var channelsStr = $('#channelsInput').val();
-                var channels;
-                if (channelsStr.toLowerCase() === 'infinity') {
-                    channels = Infinity;
-                } else {
-                    if (!channelsStr || Math.floor(channelsStr) != channelsStr || !$.isNumeric(channelsStr) || parseInt(channelsStr) < 1) {
-                        alert('The number of channels must be a positive integer or infinity.');
-                        return;
-                    }
-                    channels = parseInt(channelsStr);
-                }
-                var deviationStr = $('#deviationInput').val();
-                if (!deviationStr || !$.isNumeric(deviationStr) || parseFloat(deviationStr) < 0) {
-                    alert('Standard deviation (for the delay) must be a positive decimal or zero.');
-                    return;
-                }
-                var deviation = parseFloat(deviationStr);
-                var distribution = $('#distributionInput').val();
-                if (distribution === 'null') {
-                    distribution = null;
-                }
-                var name = $('#nameInput').val();
-                if (!name) {
-                    alert('Transition name cannot be empty.');
-                    return;
-                }
-                var priorityParamName = $('#priorityParamNameInput').val();
-                var probabilityParamName = $('#probabilityParamNameInput').val();
-                var delayParamName = $('#delayParamNameInput').val();
-                var channelsParamName = $('#channelsParamNameInput').val();
-                var distributionParamName = $('#distributionParamNameInput').val();
-                var deviationParamName = $('#deviationParamNameInput').val();
-                dialog.dialog("close");
-                self.deviation = deviation;
-                self.priority = priority;
-                self.probability = probability;
-                self.delay = delay;
-                self.channels = channels;
-                self.distribution = distribution;
-                self.setPriorityParam(priorityParamName);
-                self.setProbabilityParam(probabilityParamName);
-                self.setDelayParam(delayParamName);
-                self.setChannelsParam(channelsParamName);
-                self.setDistributionParam(distributionParamName);
-                self.setDeviationParam(deviationParamName);
-                self.name = name;
-                self.redraw();
-            }
-        },
-        close: function () {
-            dialog.dialog('destroy');
-        }
-    });
-};
-
 Transition.prototype.redraw = function () {
     var self = this;
 
@@ -353,6 +230,7 @@ Transition.prototype.draw = function () {
     enableDragAndDrop(elemId, self);
 
     $('#' + elemId).on('dblclick', function () {
-        self.openEditPopup();
+        $('#transition-edit').modal('show');
+        openTransitionEdit(self);
     });
 };
