@@ -63,61 +63,6 @@ Arc.prototype.setIsInformationLinkParam = function (paramName) {
     }
 };
 
-Arc.prototype.openEditPopup = function () {
-    var self = this;
-
-    var $popup = $('#editItemPopup');
-    $popup.attr('title', 'Edit an Arc');
-
-    var popupHtml = '';
-    if (self.fromPlace) {
-        var chbxCheckedHtml = self.isInformationLink ? ' checked="checked"' : '';
-        popupHtml += '<div class="popup-line"><span class="popup-label">Information Link:</span><input type="checkbox" id="isInfLinkChbx"'
-            + chbxCheckedHtml + ' /></div>';
-        popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Inf. Link):</span><input type="text" id="isInfLinkParamNameInput" value="'
-            + (self.isInformationLinkParamName || '') + '" /></div>';
-    }
-    popupHtml += '<div class="popup-line"><span class="popup-label">Number of Channels:</span><input type="number" min="1" id="channelsInput" value="'
-        + self.channels + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Param Name (Channels):</span><input type="text" id="channelsParamNameInput" value="'
-        + (self.channelsParamName || '') + '" /></div>';
-    $popup.html(popupHtml);
-
-    var dialog = $popup.dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        height: self.fromPlace ? 220 : 156,
-        width: 292,
-        buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                $(document).trigger('netEdited');
-                var isInfLinkNewValue = $('#isInfLinkChbx').is(':checked');
-                var channelsStr = $('#channelsInput').val();
-                if (!channelsStr || Math.floor(channelsStr) != channelsStr || !$.isNumeric(channelsStr) || parseInt(channelsStr) < 1) {
-                    alert('The number of channels must be a positive integer.');
-                    return;
-                }
-                var channels = parseInt(channelsStr);
-                var isInfLinkParamName = $('#isInfLinkParamNameInput').val();
-                var channelsParamName = $('#channelsParamNameInput').val();
-                dialog.dialog("close");
-                self.isInformationLink = isInfLinkNewValue;
-                self.channels = channels;
-                self.setIsInformationLinkParam(isInfLinkParamName);
-                self.setChannelsParam(channelsParamName);
-                self.redraw();
-            }
-        },
-        close: function () {
-            dialog.dialog('destroy');
-        }
-    });
-};
-
 Arc.prototype.setArrowPosition = function () {
     var self = this;
 
@@ -239,6 +184,7 @@ Arc.prototype.draw = function () {
     self.setArrowPosition();
 
     $('#' + elemId).find('.arc-clickable-area, .arrow-path').on('dblclick', function () {
-        self.openEditPopup();
+        $('#arc-edit').modal('show');
+        openArcEdit(self);
     });
 };
