@@ -112,12 +112,7 @@ span.stats-label {
 }
 
 span.stats-value {
-    width: 20px;
     text-align: right;
-}
-
-span.stats-value.decimal-value {
-    width: 36px;
 }
 
 span.stats-line-title, span.stats-value, span.stats-label, span.stats-delimiter {

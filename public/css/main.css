@@ -40,8 +40,8 @@ a:hover {
   font-size: 70%!important;
 }
 
-.w-20 {
-  width: 20%!important;
+.min-w-20 {
+  min-width: 20%!important;
 }
 
 .z-10 {

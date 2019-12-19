@@ -34,14 +34,12 @@ function prepareStatsArea() {
     $('span.stats-line-title').each(function () {
         $(this).attr('title', $(this).text());
     });
-    // $(document).tooltip();
 }
 
 function finalizeStats() {
     $('span.stats-value').each(function () {
         $(this).attr('title', $(this).text());
     });
-    // $(document).tooltip();
 }
 
 function updateStatsForTransitions(displayChanges, isLastUpdate, prevTime, nextTime) {
