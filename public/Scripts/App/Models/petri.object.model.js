@@ -53,161 +53,67 @@ PetriObjectModel.prototype.equalPlacesHaveEqualNumberOfMarkers = function () {
     return markersOk;
 };
 
-PetriObjectModel.prototype.getEqualPlaceGroups = function () {
-    var self = this;
+const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex) => {
+    const result = new PetriNet(self.name);
 
-    var groups = [];
+    const getId = id => id * 1000 + modelIndex;
 
-    var groupContainsItem = function (group, item) {
-        return group.filter(function (grItem) {
-            return grItem.objectId === item.objectId && grItem.placeId === item.placeId;
-        }).length > 0;
-    };
+    const net = self.objects[modelIndex].getFinalNet();
 
-    for (var i = 0; i < self.arcs.length; i++) {
-        var arc = self.arcs[i];
-        var newPlaces = [{objectId: arc.firstObjectId, placeId: arc.firstObjectPlaceId}, {
-            objectId: arc.secondObjectId,
-            placeId: arc.secondObjectPlaceId
-        }];
-        var addedToExistingGroup = false;
-        for (var j = 0; j < groups.length; j++) {
-            var group = groups[j];
-            if (groupContainsItem(group, newPlaces[0]) || groupContainsItem(group, newPlaces[1])) {
-                if (!groupContainsItem(group, newPlaces[0])) {
-                    group.push(newPlaces[0]);
-                } else if (!groupContainsItem(group, newPlaces[1])) {
-                    group.push(newPlaces[1]);
-                }
-                addedToExistingGroup = true;
-                break;
-            }
-        }
-        if (!addedToExistingGroup) {
-            groups.push(newPlaces);
-        }
+    let placeToConncetID;
+
+    for (const { name, markers, id } of net.places) {
+        const newPlace = new Place(getId(id), name, markers, 0, 0);
+        result.places.push(newPlace);
+        if (id === placeToConnectIndex) placeToConncetID = getId(id);
     }
 
-    return groups;
+    for (const { id, name, delay, deviation, distribution, priority, probability, channels } of net.transitions) {
+        var newTransition = new Transition(getId(id), name, delay, deviation, distribution, priority, probability, channels, 0, 0);
+        result.transitions.push(newTransition);
+    }
+
+    for (const { id, placeId, transitionId, fromPlace, channels, isInformationLink } of net.arcs) {
+        const place = result.places.find(e => e.id === getId(placeId));
+        const transition = result.transitions.find(e => e.id === getId(transitionId));
+
+        var newArc = new Arc(getId(id), place, transition, fromPlace, channels, isInformationLink);
+        result.arcs.push(newArc);
+    }
+
+    const arcs = self.arcs.filter(e => e.firstObjectId === modelIndex + 1);
+
+    for (const { secondObjectId, firstObjectPlaceId, secondObjectPlaceId } of arcs) {
+        const newPlaceFromConnectID = getId(firstObjectPlaceId);
+        const { places, transitions, arcs } = buildModel(self, secondObjectId - 1, newPlaceFromConnectID, secondObjectPlaceId);
+
+        result.places = result.places.concat(places);
+        result.transitions = result.transitions.concat(transitions);
+        result.arcs = result.arcs.concat(arcs);
+    }
+
+    if (placeToConncetID) {
+        result.arcs.filter(e => e.placeId === placeToConncetID).forEach(e => {
+            e.placeId = placeFromConnectID;
+        });
+        result.places = result.places.filter(e => e.id !== placeToConncetID);
+    }
+
+    return result;
 };
 
 PetriObjectModel.prototype.generateJointNet = function () {
-    var self = this;
+    const self = this;
+    const net = buildModel(self, 0);
 
-    var placeCounter = 0;
-    var transitionCounter = 0;
-    var arcCounter = 0;
+    net.transitions.forEach(e => {
+        e.outputTimesBuffer = [];
+        e.stats = {};
+    });
 
-    var net = new PetriNet(self.name);
-
-    var equalPlaceGroups = self.getEqualPlaceGroups();
-
-    var groupContainsItem = function (group, item) {
-        return group.filter(function (grItem) {
-            return grItem.objectId === item.objectId && grItem.placeId === item.placeId;
-        }).length > 0;
-    };
-
-    var placeWasAlreadyAdded = function (place, object) {
-        var item = {objectId: object.id, placeId: place.id};
-        var alreadyAdded = false;
-        for (var k = 0; k < equalPlaceGroups.length; k++) {
-            var group = equalPlaceGroups[k];
-            if (groupContainsItem(group, item)) {
-                for (var l = 0; l < group.length; l++) {
-                    var groupItem = group[l];
-                    if (net.places.filter(function (pl) {
-                        return pl.oldId === groupItem.placeId && pl.objectId === groupItem.objectId;
-                    }).length > 0) {
-                        alreadyAdded = true;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-        return alreadyAdded;
-    };
-
-    var findAlreadyAddedPlace = function (placeId, objectId) {
-        var item = {objectId: objectId, placeId: placeId};
-        var placeResult;
-        for (var k = 0; k < equalPlaceGroups.length; k++) {
-            var group = equalPlaceGroups[k];
-            if (groupContainsItem(group, item)) {
-                for (var l = 0; l < group.length; l++) {
-                    var groupItem = group[l];
-                    var placeResults = net.places.filter(function (pl) {
-                        return pl.oldId === groupItem.placeId && pl.objectId === groupItem.objectId;
-                    });
-                    if (placeResults.length > 0) {
-                        placeResult = placeResults[0];
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-        return placeResult;
-    };
-
-    for (var i = 0; i < self.objects.length; i++) {
-        var object = self.objects[i];
-        var objNet = object.getFinalNet();
-        for (var j = 0; j < objNet.places.length; j++) {
-            var oldPlace = objNet.places[j];
-            if (placeWasAlreadyAdded(oldPlace, object)) {
-                continue;
-            }
-            placeCounter++;
-            var newPlace = new Place(placeCounter, oldPlace.name, oldPlace.markers, 0, 0);
-            newPlace.objectId = object.id;
-            newPlace.objectName = object.name;
-            newPlace.oldId = oldPlace.id;
-            net.places.push(newPlace);
-        }
-        for (var j = 0; j < objNet.transitions.length; j++) {
-            var oldTran = objNet.transitions[j];
-            transitionCounter++;
-            var newTransition = new Transition(transitionCounter, oldTran.name, oldTran.delay, oldTran.deviation, oldTran.distribution, oldTran.priority,
-                oldTran.probability, oldTran.channels, 0, 0);
-            newTransition.objectId = object.id;
-            newTransition.objectName = object.name;
-            newTransition.oldId = oldTran.id;
-            net.transitions.push(newTransition);
-        }
-        for (var j = 0; j < objNet.arcs.length; j++) {
-            var oldArc = objNet.arcs[j];
-            arcCounter++;
-            var arcPlace;
-            var arcPlaces = net.places.filter(function (item) {
-                return item.objectId === object.id && item.oldId === oldArc.placeId;
-            });
-            if (arcPlaces.length === 0) {
-                arcPlace = findAlreadyAddedPlace(oldArc.placeId, object.id);
-            } else {
-                arcPlace = arcPlaces[0];
-            }
-            var arcTransition = net.transitions.filter(function (item) {
-                return item.objectId === object.id && item.oldId === oldArc.transitionId;
-            })[0];
-            var newArc = new Arc(arcCounter, arcPlace, arcTransition, oldArc.fromPlace, oldArc.channels, oldArc.isInformationLink);
-            newArc.objectId = object.id;
-            newArc.oldId = oldArc.id;
-            net.arcs.push(newArc);
-        }
-    }
-
-    for (var k = 0; k < net.transitions.length; k++) {
-        var transition = net.transitions[k];
-        transition.outputTimesBuffer = [];
-        transition.stats = {};
-    }
-
-    for (var s = 0; s < net.places.length; s++) {
-        var place = net.places[s];
-        place.stats = {};
-    }
+    net.places.forEach(e => {
+        e.stats = {};
+    });
 
     return net;
 };
