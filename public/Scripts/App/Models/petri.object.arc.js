@@ -1,11 +1,13 @@
 class PetriObjectArc {
-  constructor(id, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId) {
+  constructor(id, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId, count = 1) {
     this.id = id;
     this.firstObjectId = firstObject.id;
     this.secondObjectId = secondObject.id;
 
     this.firstObjectPlaceId = firstObjectPlaceId;
     this.secondObjectPlaceId = secondObjectPlaceId;
+
+    this.count = count;
 
     firstObject.arcs.push(this);
     secondObject.arcs.push(this);

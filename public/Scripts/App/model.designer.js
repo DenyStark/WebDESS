@@ -71,6 +71,7 @@ function removeTemporaryArrow() {
 function openArcDialog(firstObject, secondObject) {
     $('#firstNetName').text(firstObject.net.name);
     $('#secondNetName').text(secondObject.net.name);
+    $('#place-model-arc-count').html('1');
     $('#placeFirstNet, #placeSecondNet').html('');
     for (var i = 0; i < firstObject.net.places.length; i++) {
         var place = firstObject.net.places[i];
@@ -95,9 +96,10 @@ function openArcDialog(firstObject, secondObject) {
                 removeTemporaryArrow();
                 var firstObjectPlaceId = parseInt($('#placeFirstNet').val());
                 var secondObjectPlaceId = parseInt($('#placeSecondNet').val());
+                var count = parseInt($('#place-model-arc-count').val());
                 dialog.dialog("close");
                 net = null;
-                var newArc = new PetriObjectArc(newArcId, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId);
+                var newArc = new PetriObjectArc(newArcId, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId, count);
                 currentModel.arcs.push(newArc);
                 newArc.draw();
                 newArcId++;
@@ -200,7 +202,7 @@ function restoreModel(jsonModel) {
     model.arcs = model.arcs.map(e => {
         const firstObject = allObjs[e.firstObjectId];
         const secondObject = allObjs[e.secondObjectId];
-        return new PetriObjectArc(e.id, firstObject, secondObject, e.firstObjectPlaceId, e.secondObjectPlaceId);
+        return new PetriObjectArc(e.id, firstObject, secondObject, e.firstObjectPlaceId, e.secondObjectPlaceId, e.count);
     });
     $.each(model.objects, function (p, object) {
         object.arcs = model.arcs.filter(function (arcElem) {
@@ -323,7 +325,7 @@ function convertToFunction() {
 
     currentModel.arcs.forEach(arc => {
         func += `
-    const arc${arc.id} = new PetriObjectArc(${arc.id}, object${arc.firstObjectId}, object${arc.secondObjectId}, ${arc.firstObjectPlaceId}, ${arc.secondObjectPlaceId});
+    const arc${arc.id} = new PetriObjectArc(${arc.id}, object${arc.firstObjectId}, object${arc.secondObjectId}, ${arc.firstObjectPlaceId}, ${arc.secondObjectPlaceId}, ${arc.count});
     model.arcs.push(arc${arc.id});`;
     });
 

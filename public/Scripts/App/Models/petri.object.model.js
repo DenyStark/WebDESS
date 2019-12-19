@@ -53,10 +53,10 @@ PetriObjectModel.prototype.equalPlacesHaveEqualNumberOfMarkers = function () {
     return markersOk;
 };
 
-const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex) => {
+const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex, copyIndex = 0) => {
     const result = new PetriNet(self.name);
 
-    const getId = id => id * 1000 + modelIndex;
+    const getId = id => (id * 1000 + modelIndex) * 1000 + copyIndex;
 
     const net = self.objects[modelIndex].getFinalNet();
 
@@ -83,13 +83,15 @@ const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex) =
 
     const arcs = self.arcs.filter(e => e.firstObjectId === modelIndex + 1);
 
-    for (const { secondObjectId, firstObjectPlaceId, secondObjectPlaceId } of arcs) {
-        const newPlaceFromConnectID = getId(firstObjectPlaceId);
-        const { places, transitions, arcs } = buildModel(self, secondObjectId - 1, newPlaceFromConnectID, secondObjectPlaceId);
+    for (const { secondObjectId, firstObjectPlaceId, secondObjectPlaceId, count } of arcs) {
+        for (let i = 0; i < count; i++) {
+            const newPlaceFromConnectID = getId(firstObjectPlaceId);
+            const { places, transitions, arcs } = buildModel(self, secondObjectId - 1, newPlaceFromConnectID, secondObjectPlaceId, i);
 
-        result.places = result.places.concat(places);
-        result.transitions = result.transitions.concat(transitions);
-        result.arcs = result.arcs.concat(arcs);
+            result.places = result.places.concat(places);
+            result.transitions = result.transitions.concat(transitions);
+            result.arcs = result.arcs.concat(arcs);
+        }
     }
 
     if (placeToConncetID) {
