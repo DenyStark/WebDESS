@@ -26,6 +26,19 @@ class PetriObjectArc {
 
     $(`#${id}`).find('.arrow-path')[0].setAttribute('d', d);
     $(`#${id}`).find('.arc-clickable-area')[0].setAttribute('d', d);
+
+    const middleX = (from.x + to.x) / 2 + (shift - left);
+    const middleY = (from.y + to.y) / 2 + (shift - top);
+
+    const countText = $(`#${id}`).find('.arc-note')[0];
+    countText.textContent = this.count > 1 ? this.count : '';
+    countText.setAttribute('x', middleX - 3);
+    countText.setAttribute('y', middleY - 8);
+
+    const routeText = $(`#${id}`).find('.arc-note')[1];
+    routeText.textContent = `P${this.firstObjectPlaceId} => P${this.secondObjectPlaceId}`;
+    routeText.setAttribute('x', middleX - 25);
+    routeText.setAttribute('y', middleY + 25);
   }
 
   edit() {
@@ -52,6 +65,8 @@ class PetriObjectArc {
 
     const arrowSvg = `
       <svg class="petri-object-arc" id="${id}">
+        <text class="arc-note" fill="black"></text>
+        <text class="arc-note" fill="black"></text>
         <path class="arc-clickable-area" d="" style="stroke: transparent; stroke-width: 18px; fill: none;" id="${id}ClickableArea"/>
         <path class="arrow-path" style="stroke:black; stroke-width: 1.25px; fill: none;" id="${id}ArrowPath"/>
       </svg>`;
