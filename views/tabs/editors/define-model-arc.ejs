@@ -1,0 +1,67 @@
+<div class="modal fade" id="define-model-arc-edit" tabindex="-1" role="dialog" aria-labelledby="define-model-arc-lab"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="define-model-arc-lab">Define an Arc</h5>
+        <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-inline">
+          <div class="form-group my-1 w-100">
+            <label class="col-6 justify-content-start">From (place name):</label>
+            <select class="form-control" id="define-model-arc-from"></select>
+          </div>
+          <div class="form-group my-1 w-100">
+            <label class="col-6 justify-content-start">To (place name):</label>
+            <select class="form-control" id="define-model-arc-to"></select>
+          </div>
+          <div class="form-group my-1 w-100">
+            <label class="col-6 justify-content-start">Count:</label>
+            <input type="number" class="form-control" id="define-model-arc-count" min="1" max="100">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-main" onclick="defineModelArc()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let firstObjectToConnect;
+  let secondObjectToConnect;
+
+  function defineModelArc() {
+    removeTemporaryArrow();
+    const firstObjectPlaceId = parseInt($('#define-model-arc-from').val().split(' - ')[1]);
+    const secondObjectPlaceId = parseInt($('#define-model-arc-to').val().split(' - ')[1]);
+    const count = parseInt($('#define-model-arc-count').val());
+
+    net = null;
+    const newArc = new PetriObjectArc(newArcId, firstObjectToConnect, secondObjectToConnect, firstObjectPlaceId, secondObjectPlaceId, count);
+    currentModel.arcs.push(newArc);
+    newArc.draw();
+    newArcId++;
+  }
+
+  function openDefineModelArc(firstObject, secondObject) {
+    firstObjectToConnect = firstObject;
+    secondObjectToConnect = secondObject;
+
+    let fromOprions = '';
+    firstObjectToConnect.net.places.forEach(({ name, id }) => {
+      fromOprions += `<option>${name} - ${id}</option>`;
+    });
+    $('#define-model-arc-from').html(fromOprions);
+
+    let toOprions = '';
+    secondObjectToConnect.net.places.forEach(({ name, id }) => {
+      toOprions += `<option>${name} - ${id}</option>`;
+    });
+    $('#define-model-arc-to').html(toOprions);
+
+    $('#define-model-arc-count').val(1);
+  }
+</script>

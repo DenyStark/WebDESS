@@ -22,8 +22,9 @@
       </div>
     </div>
 
-    <div id="editItemPopup" style="display: none"></div>
     <% include tabs/model/svg %>
+
+    <% include tabs/editors/define-model-arc %>
 
     <% include tabs/nav/code %>
     <% include tabs/model/save %>
@@ -41,6 +42,9 @@
       </div>
     </div>
     <div id="editArcsPopup" title="Edit Existing Arcs for This Object" style="display: none"></div>
+
+    <div id="editItemPopup" style="display: none"></div>
+
     <div id="addMoreObjectsPopup" title="Add More Objects of This Class" style="display: none">
       <div class="popup-line"><span class="popup-label">Number of Objects:</span><input type="number" min="1"
           id="numOfNewObjects" /></div>

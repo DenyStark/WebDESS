@@ -68,49 +68,6 @@ function removeTemporaryArrow() {
     $('.temp-arrow').remove();
 }
 
-function openArcDialog(firstObject, secondObject) {
-    $('#firstNetName').text(firstObject.net.name);
-    $('#secondNetName').text(secondObject.net.name);
-    $('#place-model-arc-count').html('1');
-    $('#placeFirstNet, #placeSecondNet').html('');
-    for (var i = 0; i < firstObject.net.places.length; i++) {
-        var place = firstObject.net.places[i];
-        $('#placeFirstNet').append('<option value="' + place.id + '">' + place.name + '</option>');
-    }
-    for (var i = 0; i < secondObject.net.places.length; i++) {
-        var place = secondObject.net.places[i];
-        $('#placeSecondNet').append('<option value="' + place.id + '">' + place.name + '</option>');
-    }
-
-    var dialog = $('#defineArcPopup').dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        width: 292,
-        buttons: {
-            'Cancel': function () {
-                removeTemporaryArrow();
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                removeTemporaryArrow();
-                var firstObjectPlaceId = parseInt($('#placeFirstNet').val());
-                var secondObjectPlaceId = parseInt($('#placeSecondNet').val());
-                var count = parseInt($('#place-model-arc-count').val());
-                dialog.dialog("close");
-                net = null;
-                var newArc = new PetriObjectArc(newArcId, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId, count);
-                currentModel.arcs.push(newArc);
-                newArc.draw();
-                newArcId++;
-            }
-        },
-        close: function () {
-            dialog.dialog('destroy');
-        }
-    });
-}
-
 function newArc() {
     allowDragAndDrop = false;
     $(document).one('mousedown', function (e) {
@@ -141,7 +98,8 @@ function newArc() {
                             || (item.firstObjectId === secondObjectId && item.secondObjectId === firstObjectId);
                     }).length === 0) {
                         temporaryArrowFixed = true;
-                        openArcDialog(firstObject, secondObject);
+                        $('#define-model-arc-edit').modal('show');
+                        openDefineModelArc(firstObject, secondObject);
                     } else {
                         removeTemporaryArrow();
                     }
