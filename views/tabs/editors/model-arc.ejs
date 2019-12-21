@@ -9,16 +9,16 @@
       <div class="modal-body">
         <form class="form-inline">
           <div class="form-group my-1 w-100">
-            <label class="col-6 justify-content-start">From (place name):</label>
-            <select class="form-control" id="model-arc-from"></select>
+            <label class="col-6 justify-content-start">Connections count:</label>
+            <input type="number" class="form-control" id="model-arc-connections-count" min="1" max="100"
+              onchange="setConnectionsView()">
           </div>
+
+          <div class="col" id="model-arc-connections"></div>
+
           <div class="form-group my-1 w-100">
-            <label class="col-6 justify-content-start">To (place name):</label>
-            <select class="form-control" id="model-arc-to"></select>
-          </div>
-          <div class="form-group my-1 w-100">
-            <label class="col-6 justify-content-start">Count:</label>
-            <input type="number" class="form-control" id="model-arc-count" min="1" max="100">
+            <label class="col-6 justify-content-start">Copies:</label>
+            <input type="number" class="form-control" id="model-arc-copies" min="1" max="100">
           </div>
         </form>
       </div>
@@ -33,16 +33,51 @@
   let firstObjectToConnect;
   let secondObjectToConnect;
 
+  function setConnectionsView() {
+    let options = '<hr class="separator">';
+
+    let fromOprions = '';
+    firstObjectToConnect.net.places.forEach(({ name, id }) => {
+      fromOprions += `<option value="${id}">${name} - ${id}</option>`;
+    });
+
+    let toOprions = '';
+    secondObjectToConnect.net.places.forEach(({ name, id }) => {
+      toOprions += `<option value="${id}">${name} - ${id}</option>`;
+    });
+
+    const count = parseInt($('#model-arc-connections-count').val());
+    for (let i = 0; i < count; i++) {
+      options += `
+          <div class="form-group my-1 w-100">
+            <label class="col-6 justify-content-start">From (place name):</label>
+            <select class="form-control" id="model-arc-from-${i}">${fromOprions}</select>
+          </div>
+          <div class="form-group my-1 w-100">
+            <label class="col-6 justify-content-start">To (place name):</label>
+            <select class="form-control" id="model-arc-to-${i}">${toOprions}</select>
+          </div>
+          <hr class="separator">`;
+    }
+
+    $('#model-arc-connections').html(options);
+  }
+
   function defineModelArc() {
     removeTemporaryArrow();
-    const firstObjectPlaceId = parseInt($('#model-arc-from').val().split(' - ')[1]);
-    const secondObjectPlaceId = parseInt($('#model-arc-to').val().split(' - ')[1]);
-    const count = parseInt($('#model-arc-count').val());
+
+    const length = parseInt($('#model-arc-connections-count').val());
+    const connections = Array.from(new Array(length), (e, i) => ({
+      from: parseInt($(`#model-arc-from-${i}`).val()),
+      to: parseInt($(`#model-arc-to-${i}`).val()),
+    }));
+
+    const copies = parseInt($('#model-arc-copies').val());
 
     net = null;
-    const newArc = new PetriObjectArc(newArcId, firstObjectToConnect, secondObjectToConnect, firstObjectPlaceId, secondObjectPlaceId, count);
-    currentModel.arcs.push(newArc);
-    newArc.draw();
+    const arc = new PetriObjectArc(newArcId, firstObjectToConnect, secondObjectToConnect, connections, copies);
+    currentModel.arcs.push(arc);
+    arc.draw();
     newArcId++;
   }
 
@@ -50,18 +85,8 @@
     firstObjectToConnect = firstObject;
     secondObjectToConnect = secondObject;
 
-    let fromOprions = '';
-    firstObjectToConnect.net.places.forEach(({ name, id }) => {
-      fromOprions += `<option>${name} - ${id}</option>`;
-    });
-    $('#model-arc-from').html(fromOprions);
-
-    let toOprions = '';
-    secondObjectToConnect.net.places.forEach(({ name, id }) => {
-      toOprions += `<option>${name} - ${id}</option>`;
-    });
-    $('#model-arc-to').html(toOprions);
-
-    $('#model-arc-count').val(1);
+    $('#model-arc-connections-count').val(1);
+    setConnectionsView();
+    $('#model-arc-copies').val(1);
   }
 </script>
