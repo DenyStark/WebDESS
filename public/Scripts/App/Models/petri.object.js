@@ -143,103 +143,6 @@ PetriObject.prototype.getFinalNet = function () {
     return finalNet;
 };
 
-PetriObject.prototype.openEditPopup = function () {
-    var self = this;
-
-    const netOptions = filesManager.loadList('Net').map(e => ({
-        netId: e.data.id,
-        netName: e.title,
-        net: JSON.stringify(e.data),
-    }));
-    if (netOptions.length === 0) return alert('Petri nets list is empty.');
-
-    var $popup = $('#editItemPopup');
-    $popup.attr('title', 'Edit a Petri Object');
-
-    var popupHtml = '<div class="popup-line"><span class="popup-label">Name:</span><input type="text" id="nameInput" value="' + self.name + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Class Name:</span><input type="text" id="classNameInput" value="' + self.className
-        + '" /></div>';
-    popupHtml += '<div class="popup-line"><span class="popup-label">Net:</span><select id="netInput">';
-    $.each(netOptions, function (o, option) {
-        var selectedHtml = self.netId === option.netId ? ' selected="selected"' : '';
-        var displayText = option.netName + ' (id: ' + option.netId + ')';
-        popupHtml += '<option value="' + option.netId + '"' + selectedHtml + '>' + displayText + '</option>';
-    });
-    popupHtml += '</select></div>';
-    if (self.net.hasParameters()) {
-        popupHtml += '<div class="popup-line" id="paramsSection"><span class="popup-label">Net Parameters:</span></div>';
-    }
-    $.each(self.net.getParameters(), function (p, param) {
-        popupHtml += '<div class="popup-line param-section-line"><span class="popup-label">' + param + '</span><input type="text" class="param-value-input"'
-            + ' data-name="' + param + '" value="' + self.getParamValue(param) + '" /></div>';
-    });
-    $popup.html(popupHtml);
-
-    var dialog = $popup.dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        width: 292,
-        open: function () {
-            $('#netInput').on('change', function () {
-                $('#paramsSection, .param-section-line').remove();
-                var netId = parseInt($('#netInput').val());
-                var newNet = restorePetriNet(parsePetriNet(netOptions.filter(function (item) {
-                    return item.netId === netId;
-                })[0].net));
-                var additionalPopupHtml = '';
-                if (newNet.hasParameters()) {
-                    additionalPopupHtml += '<div class="popup-line" id="paramsSection"><span class="popup-label">Net Parameters:</span></div>';
-                }
-                $.each(newNet.getParameters(), function (p, param) {
-                    additionalPopupHtml += '<div class="popup-line param-section-line"><span class="popup-label">' + param
-                        + '</span><input type="text" class="param-value-input" data-name="' + param + '" value="" /></div>';
-                });
-                $popup.append(additionalPopupHtml);
-            });
-        },
-        buttons: {
-            'Cancel': function () {
-                dialog.dialog('close');
-            },
-            'Ok': function () {
-                $(document).trigger('modelEdited');
-                var netId = parseInt($('#netInput').val());
-                var name = $('#nameInput').val();
-                if (!name) {
-                    alert('Object name cannot be empty.');
-                    return;
-                }
-                var className = $('#classNameInput').val();
-                if (!className) {
-                    alert('Class name cannot be empty.');
-                    return;
-                }
-                var paramValues = [];
-                $('.param-value-input').each(function () {
-                    paramValues.push({
-                        name: $(this).data('name'),
-                        value: $(this).val()
-                    });
-                });
-                dialog.dialog("close");
-                var needToEditArcs = (self.netId !== netId && self.arcs.length > 0);
-                self.netId = netId;
-                self.net = restorePetriNet(parsePetriNet(netOptions.filter(function (item) {
-                    return item.netId === netId;
-                })[0].net));
-                self.paramValues = paramValues;
-                self.name = name;
-                self.className = className;
-                self.redraw();
-            }
-        },
-        close: function () {
-            dialog.dialog('destroy');
-        }
-    });
-};
-
 PetriObject.prototype.redraw = function () {
     var self = this;
 
@@ -290,6 +193,7 @@ PetriObject.prototype.draw = function () {
     enableDragAndDrop(elemId, self);
 
     $('#' + elemId).on('dblclick', function () {
-        self.openEditPopup();
+        $('#petri-object-edit').modal('show');
+        openPetriObjectEdit(self);
     });
 };
