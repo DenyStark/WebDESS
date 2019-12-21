@@ -41,24 +41,6 @@ class PetriObjectArc {
     routeText.setAttribute('y', middleY + 25);
   }
 
-  edit() {
-    const dialog = $('#defineArcPopup').dialog({
-      autoOpen: true,
-      modal: true,
-      resizable: false,
-      width: 292,
-      buttons: {
-        'Cancel': () => { dialog.dialog('close'); },
-        'Ok': () => {
-          this.firstObjectPlaceId = parseInt($('#placeFirstNet').val());
-          this.secondObjectPlaceId = parseInt($('#placeSecondNet').val());
-          dialog.dialog("close");
-        }
-      },
-      close: () => { dialog.dialog('destroy'); }
-    });
-  }
-
   draw() {
     const id = `object-arc${this.id}`;
     if ($(`#${id}`).length) return;
@@ -73,8 +55,6 @@ class PetriObjectArc {
 
     $('.page-svg').append(arrowSvg);
     this.setArrowPosition();
-
-    $(`#${id}`).find('.arc-clickable-area, .arrow-path').on('dblclick', this.edit);
   }
   redraw() { this.setArrowPosition(); }
 

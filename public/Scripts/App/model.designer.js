@@ -358,88 +358,6 @@ function addMoreSimilarObjects(objectId, number) {
     }
 }
 
-function editArcsForObject(objectId) {
-    var $popup = $('#editArcsPopup');
-    var object = currentModel.objects.filter(function (item) {
-        return item.id === objectId;
-    })[0];
-    var arcs = object.arcs;
-    for (var j = 0; j < arcs.length; j++) {
-        var arc = arcs[j];
-        var newHtml = '';
-        if (arc.firstObjectId === objectId) {
-            var secondObject = currentModel.objects.filter(function (item) {
-                return item.id === arc.secondObjectId;
-            })[0];
-            newHtml += '<div class="popup-line"><span class="popup-label">Place (net: ' + object.net.name + '):</span><select data-number="first" '
-                + 'data-arc-id="' + arc.id + '" class="place-for-net">';
-            for (var i = 0; i < object.net.places.length; i++) {
-                var place = object.net.places[i];
-                newHtml += '<option value="' + place.id + '">' + place.name + '</option>';
-            }
-            var selectedValueForSecondLine = '';
-            for (var i = 0; i < secondObject.net.places.length; i++) {
-                var place = secondObject.net.places[i];
-                if (place.id === arc.secondObjectPlaceId) {
-                    selectedValueForSecondLine = place.name;
-                    break;
-                }
-            }
-            newHtml += '</select></div><div class="popup-line last-in-group"><span class="popup-label">Place (net: ' + secondObject.net.name + '):</span>'
-                + '<span class="ready-value">' + selectedValueForSecondLine + '</span></div>';
-        } else {
-            var firstObject = currentModel.objects.filter(function (item) {
-                return item.id === arc.firstObjectId;
-            })[0];
-            var selectedValueForFirstLine = '';
-            for (var i = 0; i < firstObject.net.places.length; i++) {
-                var place = firstObject.net.places[i];
-                if (place.id === arc.firstObjectPlaceId) {
-                    selectedValueForFirstLine = place.name;
-                    break;
-                }
-            }
-            newHtml += '<div class="popup-line"><span class="popup-label">Place (net: ' + firstObject.net.name + '):</span><span class="ready-value">'
-                + selectedValueForFirstLine + '</span></div>';
-            newHtml += '<div class="popup-line last-in-group"><span class="popup-label">Place (net: ' + object.net.name
-                + '):</span><select data-number="second" data-arc-id="' + arc.id + '" class="place-for-net">';
-            for (var i = 0; i < object.net.places.length; i++) {
-                var place = object.net.places[i];
-                newHtml += '<option value="' + place.id + '">' + place.name + '</option>';
-            }
-            newHtml += '</select></div>';
-        }
-        $popup.append(newHtml);
-    }
-
-    var editArcsDialog = $popup.dialog({
-        autoOpen: true,
-        modal: true,
-        resizable: false,
-        width: 292,
-        open: function () {
-            $(".ui-dialog-titlebar-close").hide();
-        },
-        close: function () {
-            editArcsDialog.dialog('destroy');
-        },
-        buttons: {
-            'Ok': function () {
-                $('.place-for-net').each(function () {
-                    var arcId = parseInt($(this).data('arc-id'));
-                    var placeId = parseInt($(this).val());
-                    var number = $(this).data('number');
-                    var arc = currentModel.arcs.filter(function (item) {
-                        return item.id === arcId;
-                    })[0];
-                    arc[number + 'ObjectPlaceId'] = placeId;
-                });
-                editArcsDialog.dialog('close');
-            }
-        }
-    });
-}
-
 $(document).ready(function () {
     allowDragAndDrop = true;
 
@@ -462,46 +380,6 @@ $(document).ready(function () {
                 var arcId = parseInt($focusedElement.attr('id').substr(10));
                 deleteArc(arcId);
             }
-        }
-    });
-    $(document).on('click', '.edit-object-arcs', function () {
-        var objectId = $(this).data('id');
-        $(this).remove();
-        editArcsForObject(objectId);
-    });
-    $(document).on('contextmenu', function (e) {
-        var $target = $(e.target);
-        if ($target.hasClass('petri-object')) {
-            e.preventDefault();
-            var objectId = parseInt($target.attr('id').substr(6));
-            var addMoreObjectsDialog = $('#addMoreObjectsPopup').dialog({
-                autoOpen: true,
-                modal: true,
-                resizable: false,
-                height: 124,
-                width: 292,
-                open: function () {
-                    $('#numOfNewObjects').val('');
-                },
-                buttons: {
-                    'Cancel': function () {
-                        addMoreObjectsDialog.dialog('close');
-                    },
-                    'Ok': function () {
-                        var numStr = $('#numOfNewObjects').val();
-                        if (!numStr || Math.floor(numStr) != numStr || !$.isNumeric(numStr) || parseInt(numStr) < 1) {
-                            alert('Number of Objects must be a positive integer.');
-                            return;
-                        }
-                        var number = parseInt(numStr);
-                        addMoreObjectsDialog.dialog('close');
-                        addMoreSimilarObjects(objectId, number);
-                    }
-                },
-                close: function () {
-                    addMoreObjectsDialog.dialog('destroy');
-                }
-            });
         }
     });
 });
