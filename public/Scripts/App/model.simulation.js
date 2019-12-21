@@ -247,6 +247,8 @@ function runSimulationForModel(currentPetriObjectModel) {
     if (!net) {
         net = currentPetriObjectModel.generateJointNet();
         allDelaysAreZero = net.allDelaysAreZero();
+        // TODO: for debuging
+        console.log(convert(net));
     } else {
         for (var k = 0; k < net.places.length; k++) {
             net.places[k].stats = { };
@@ -259,4 +261,44 @@ function runSimulationForModel(currentPetriObjectModel) {
     $('.stats').html('<div class="stats-title no-underline">Simulation in progress. Please wait...</div>');
     startTime = (new Date()).getTime();
     setTimeout(makeSteps, 0);
+}
+
+// TODO: for debuging
+function convert(net) {
+    const { valid, message } = net.validate();
+    if (!valid) return alert(`Invalid Petri net: ${message}`);
+
+    const name = net.name || 'New';
+    let func = `function generate${normalizeString(name)}PetriNet() {
+    const net = new PetriNet('${name}');
+    `;
+
+    for (const place of net.places) func += `
+    const place${place.id} = new Place(${place.id}, '${place.name}', ${place.markers}, ${place.top}, ${place.left});
+    net.places.push(place${place.id});
+    `;
+
+    for (const transition of net.transitions) {
+        const distribution = transition.distribution ? `'${transition.distribution}'` : 'null';
+        func += `
+    const transition${transition.id} = new Transition(${transition.id}, '${transition.name}', ${transition.delay}, ${transition.deviation}, ${distribution}, ${transition.priority}, ${transition.probability}, ${transition.channels}, ${transition.top}, ${transition.left});
+    net.transitions.push(transition${transition.id});
+    `;
+    }
+
+    for (const arc of net.arcs) {
+        const fromPlace = arc.fromPlace ? 'true' : 'false';
+        const infLink = arc.isInformationLink ? 'true' : 'false';
+        func += `
+    const arc${arc.id} = new Arc(${arc.id}, place${arc.placeId}, transition${arc.transitionId}, ${fromPlace}, ${arc.channels}, ${infLink});
+    net.arcs.push(arc${arc.id});
+    `;
+    }
+
+    func += `
+    return net;
+}`;
+
+    console.log(`generate${normalizeString(name)}PetriObjectModel()`);
+    return func;
 }
