@@ -98,7 +98,7 @@ function newArc() {
                             || (item.firstObjectId === secondObjectId && item.secondObjectId === firstObjectId);
                     }).length === 0) {
                         temporaryArrowFixed = true;
-                        $('#define-model-arc-edit').modal('show');
+                        $('#model-arc-edit').modal('show');
                         openDefineModelArc(firstObject, secondObject);
                     } else {
                         removeTemporaryArrow();
