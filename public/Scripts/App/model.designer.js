@@ -283,7 +283,7 @@ function convertToFunction() {
 
     currentModel.arcs.forEach(arc => {
         func += `
-    const arc${arc.id} = new PetriObjectArc(${arc.id}, object${arc.firstObjectId}, object${arc.secondObjectId}, ${arc.firstObjectPlaceId}, ${arc.secondObjectPlaceId}, ${arc.count});
+    const arc${arc.id} = new PetriObjectArc(${arc.id}, object${arc.firstObjectId}, object${arc.secondObjectId}, ${JSON.stringify(arc.connections)}, ${arc.copies});
     model.arcs.push(arc${arc.id});`;
     });
 
