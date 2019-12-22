@@ -116,6 +116,7 @@ th, td {
   display: inline-block;
   font-weight: bold;
   width: 50px;
+  top: -5px;
   text-align: center;
 }
 
