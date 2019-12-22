@@ -42,31 +42,7 @@ Place.prototype.setMarkersParam = function (paramName) {
 };
 
 Place.prototype.drawMarkers = function ($elem) {
-    var self = this;
-
-    if (self.markers > self.markersPerLine * 3) {
-        $('<div class="markers">' + self.markers + '</div>').appendTo($elem);
-        return;
-    }
-
-    var linesOfMarkers = 0;
-
-    for (var i = 0; i < self.markers; i++) {
-        var $marker = $('<div>').addClass('marker');
-        if (i % self.markersPerLine === 0) {
-            linesOfMarkers++;
-            var markersInThisLine = Math.min(self.markersPerLine, self.markers - i);
-            var marginLeft = 23 - 4 * (markersInThisLine - 1);
-            $marker.css({'margin-left': marginLeft + 'px'});
-        }
-        $marker.appendTo($elem);
-    }
-
-    var marginTop = 4 * (2 - linesOfMarkers);
-    var markersInFirstLine = Math.min(self.markersPerLine, self.markers);
-    $elem
-        .find('.marker:nth-child(-n+' + (markersInFirstLine + 1) + ')')
-        .css({'margin-top': marginTop + 'px'});
+    $(`<div class="markers">${this.markers > 0 ? this.markers : ''}</div>`).appendTo($elem);
 }
 
 Place.prototype.redraw = function () {
