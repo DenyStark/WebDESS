@@ -26,50 +26,38 @@ PetriObjectModel.prototype.hasParameters = function () {
 };
 
 PetriObjectModel.prototype.equalPlacesHaveEqualNumberOfMarkers = function () {
-    var self = this;
+    const self = this;
 
-    var markersOk = true;
+    self.arcs.forEach(arc => {
+        const firstObject = self.objects.find(e => e.id === arc.firstObjectId);
+        const secondObject = self.objects.find(e => e.id === arc.secondObjectId);
 
-    for (var i = 0; i < self.arcs.length; i++) {
-        var arc = self.arcs[i];
-        var firstObject = self.objects.filter(function (item) {
-            return item.id === arc.firstObjectId;
-        })[0];
-        var secondObject = self.objects.filter(function (item) {
-            return item.id === arc.secondObjectId;
-        })[0];
-        var firstPlace = firstObject.net.places.filter(function (place) {
-            return place.id === arc.firstObjectPlaceId;
-        })[0];
-        var secondPlace = secondObject.net.places.filter(function (place) {
-            return place.id === arc.secondObjectPlaceId;
-        })[0]
-        if (firstPlace.markers !== secondPlace.markers) {
-            markersOk = false;
-            break;
-        }
-    }
+        arc.connections.forEach(({ from, to }) => {
+            const firstPlace = firstObject.net.places.find(e => e.id === from);
+            const secondPlace = secondObject.net.places.find(e => e.id === to);
 
-    return markersOk;
+            if (firstPlace.markers !== secondPlace.markers) return false;
+        });
+    });
+
+    return true;
 };
 
-const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex, copyIndex = 0) => {
+const buildModel = (self, modelIndex, parentModelIndex, connections = [], copyIndex = 0) => {
     const result = new PetriNet(self.name);
 
     const getId = id => (id * 1000 + modelIndex) * 1000 + copyIndex;
+    const getParentId = id => (id * 1000 + parentModelIndex) * 1000 + copyIndex;
 
     const net = self.objects[modelIndex].getFinalNet();
-
-    let placeToConncetID;
 
     for (const { name, markers, id } of net.places) {
         const newPlace = new Place(getId(id), name, markers, 0, 0);
         result.places.push(newPlace);
-        if (id === placeToConnectIndex) placeToConncetID = getId(id);
     }
 
     for (const { id, name, delay, deviation, distribution, priority, probability, channels } of net.transitions) {
-        var newTransition = new Transition(getId(id), name, delay, deviation, distribution, priority, probability, channels, 0, 0);
+        const newTransition = new Transition(getId(id), name, delay, deviation, distribution, priority, probability, channels, 0, 0);
         result.transitions.push(newTransition);
     }
 
@@ -77,16 +65,15 @@ const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex, c
         const place = result.places.find(e => e.id === getId(placeId));
         const transition = result.transitions.find(e => e.id === getId(transitionId));
 
-        var newArc = new Arc(getId(id), place, transition, fromPlace, channels, isInformationLink);
+        const newArc = new Arc(getId(id), place, transition, fromPlace, channels, isInformationLink);
         result.arcs.push(newArc);
     }
 
     const arcs = self.arcs.filter(e => e.firstObjectId === modelIndex + 1);
 
-    for (const { secondObjectId, firstObjectPlaceId, secondObjectPlaceId, count } of arcs) {
-        for (let i = 0; i < count; i++) {
-            const newPlaceFromConnectID = getId(firstObjectPlaceId);
-            const { places, transitions, arcs } = buildModel(self, secondObjectId - 1, newPlaceFromConnectID, secondObjectPlaceId, i);
+    for (const { secondObjectId, connections, copies } of arcs) {
+        for (let i = 0; i < copies; i++) {
+            const { places, transitions, arcs } = buildModel(self, secondObjectId - 1, modelIndex, connections, i);
 
             result.places = result.places.concat(places);
             result.transitions = result.transitions.concat(transitions);
@@ -94,11 +81,11 @@ const buildModel = (self, modelIndex, placeFromConnectID, placeToConnectIndex, c
         }
     }
 
-    if (placeToConncetID) {
-        result.arcs.filter(e => e.placeId === placeToConncetID).forEach(e => {
-            e.placeId = placeFromConnectID;
+    for (const { from, to } of connections) {
+        result.arcs.filter(e => e.placeId === getId(to)).forEach(e => {
+            e.placeId = getParentId(from);
         });
-        result.places = result.places.filter(e => e.id !== placeToConncetID);
+        result.places = result.places.filter(e => e.id !== getId(to));
     }
 
     return result;
