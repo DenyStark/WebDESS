@@ -160,7 +160,7 @@ function restoreModel(jsonModel) {
     model.arcs = model.arcs.map(e => {
         const firstObject = allObjs[e.firstObjectId];
         const secondObject = allObjs[e.secondObjectId];
-        return new PetriObjectArc(e.id, firstObject, secondObject, e.firstObjectPlaceId, e.secondObjectPlaceId, e.count);
+        return new PetriObjectArc(e.id, firstObject, secondObject, e.connections, e.copies);
     });
     $.each(model.objects, function (p, object) {
         object.arcs = model.arcs.filter(function (arcElem) {
