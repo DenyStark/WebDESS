@@ -1,13 +1,11 @@
 class PetriObjectArc {
-  constructor(id, firstObject, secondObject, firstObjectPlaceId, secondObjectPlaceId, count = 1) {
+  constructor(id, firstObject, secondObject, connections, copies = 1) {
     this.id = id;
     this.firstObjectId = firstObject.id;
     this.secondObjectId = secondObject.id;
 
-    this.firstObjectPlaceId = firstObjectPlaceId;
-    this.secondObjectPlaceId = secondObjectPlaceId;
-
-    this.count = count;
+    this.connections = connections;
+    this.copies = copies;
 
     firstObject.arcs.push(this);
     secondObject.arcs.push(this);
@@ -30,15 +28,19 @@ class PetriObjectArc {
     const middleX = (from.x + to.x) / 2 + (shift - left);
     const middleY = (from.y + to.y) / 2 + (shift - top);
 
-    const countText = $(`#${id}`).find('.arc-note')[0];
-    countText.textContent = this.count > 1 ? this.count : '';
-    countText.setAttribute('x', middleX - 3);
-    countText.setAttribute('y', middleY - 8);
+    const countNote = $(`#${id}`).find('.arc-note')[0];
+    countNote.textContent = this.copies > 1 ? this.copies : '';
+    countNote.setAttribute('x', middleX - 3);
+    countNote.setAttribute('y', middleY - 8);
 
-    const routeText = $(`#${id}`).find('.arc-note')[1];
-    routeText.textContent = `P${this.firstObjectPlaceId} => P${this.secondObjectPlaceId}`;
-    routeText.setAttribute('x', middleX - 25);
-    routeText.setAttribute('y', middleY + 25);
+    const routeNote = $(`#${id}`).find('.arc-note')[1];
+    let routeText = '';
+    for (const connection of this.connections)
+      routeText += `<tspan x="${middleX - 25}" dy="15">P${connection.from} => P${connection.to}</tspan>\n`;
+    $(routeNote).html(routeText);
+
+    routeNote.setAttribute('x', middleX - 25);
+    routeNote.setAttribute('y', middleY + 15);
   }
 
   draw() {
