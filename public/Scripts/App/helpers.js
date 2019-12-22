@@ -98,7 +98,7 @@ function getCoords(elem) {
 
 function getPositionWithinSandbox(top, left, object) {
     const minX = 0;
-    const maxX = $(window).width() - $('.stats-container').outerWidth() - 50;
+    const maxX = $(window).width() - $('#stats-container').outerWidth() - 50;
     const minY = $('#navbar').outerHeight() + 16;
     const maxY = $(window).height() - 50 - (object.bottomNotesHeight || 0);
 

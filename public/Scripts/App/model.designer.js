@@ -24,7 +24,7 @@ function reset() {
     currentModel.id = newPetriObjectModelId;
     net = null;
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 }
 
 function createMouseDownEvent(buttonLocation) {
@@ -180,7 +180,7 @@ function buildPetri(json) {
     currentModel = openedModel;
 
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 
     currentModel.draw();
 }
@@ -335,7 +335,7 @@ function generateFromFunction() {
     currentModel = net;
 
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 
     currentModel.draw();
 }

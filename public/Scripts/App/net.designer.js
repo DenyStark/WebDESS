@@ -29,7 +29,7 @@ function reset() {
     currentPetriNet.id = newPetriNetId;
     cleanBuffers();
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 }
 
 function createMouseDownEvent(buttonLocation) {
@@ -155,7 +155,7 @@ function buildPetri(json) {
     currentPetriNet = openedNet;
 
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 
     currentPetriNet.draw();
 }
@@ -363,7 +363,7 @@ function generateFromFunction() {
     currentPetriNet = net;
 
     $('.page-svg svg, .top-svg svg, .sandbox div').remove();
-    $('.stats').html('');
+    $('#stats').html('');
 
     currentPetriNet.draw();
 }
