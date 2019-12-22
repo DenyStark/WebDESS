@@ -53,11 +53,13 @@ const buildModel = (self, modelIndex, parentModelIndex, connections = [], copyIn
 
     for (const { name, markers, id } of net.places) {
         const newPlace = new Place(getId(id), name, markers, 0, 0);
+        newPlace.objectName = self.objects[modelIndex].name;
         result.places.push(newPlace);
     }
 
     for (const { id, name, delay, deviation, distribution, priority, probability, channels } of net.transitions) {
         const newTransition = new Transition(getId(id), name, delay, deviation, distribution, priority, probability, channels, 0, 0);
+        newTransition.objectName = self.objects[modelIndex].name;
         result.transitions.push(newTransition);
     }
 

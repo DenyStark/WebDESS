@@ -65,12 +65,6 @@ function prepareStatsArea() {
     });
 }
 
-function finalizeStats() {
-    $('span.stats-value').each(function () {
-        $(this).attr('title', $(this).text());
-    });
-}
-
 function updateStatsForTransitions(displayChanges, isLastUpdate, prevTime, nextTime) {
     for (var i = 0; i < net.transitions.length; i++) {
         var transition = net.transitions[i];
@@ -356,7 +350,6 @@ function performFinalActions() {
 
     updateStatsForPlaces(true, true, currentTime, nextTime);
     updateStatsForTransitions(true, true, currentTime, nextTime);
-    finalizeStats();
 
     net.places.forEach(e => {
         e.stats = undefined;
@@ -368,7 +361,7 @@ function performFinalActions() {
         e.outputTimesBuffer = e.outputTimesBuffer.map(e => e -= currentTime);
     });
 
-    $('#stats').append(`<div class="h6 py-3">
+    $('#stats').parent().append(`<div class="h6 py-3">
         Time elapsed: <span class="font-weight-light">${getTimeString(endTime - startTime)}</span>
     </div>`);
     $('.btn-disabled').removeClass('btn-disabled');
