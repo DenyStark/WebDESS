@@ -66,11 +66,13 @@ th, td {
   width: 50px;
   height: 50px;
   background: url('../images/place.png') no-repeat center center;
+  background-size: contain;
 }
 
 .petri-place:hover {
   cursor: pointer;
   background: url('../images/place-hovered.png') no-repeat center center;
+  background-size: contain;
 }
 
 .petri-object {
@@ -78,11 +80,13 @@ th, td {
   width: 50px;
   height: 50px;
   background: url('../images/petri-object.png') no-repeat center center;
+  background-size: contain;
 }
 
 .petri-object:hover {
   cursor: pointer;
   background: url('../images/petri-object-hovered.png') no-repeat center center;
+  background-size: contain;
 }
 
 .item-name {
@@ -116,6 +120,7 @@ th, td {
   display: inline-block;
   font-weight: bold;
   width: 50px;
+  top: -5px;
   text-align: center;
 }
 
