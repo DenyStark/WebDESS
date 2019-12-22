@@ -13,26 +13,55 @@ var stepsCount;
 var startTime;
 
 function prepareStatsArea() {
-    var $stats = $('.stats');
+    const $stats = $('#stats');
     $stats.html('');
-    $stats.append('<div class="stats-title">Places (qty of markers):</div>');
-    for (var l = 0; l < net.places.length; l++) {
-        var place = net.places[l];
-        $stats.append('<div class="stats-line"><span class="stats-line-title">' + place.name + '</span><span class="stats-label">min =</span>'
-            + '<span class="stats-value" id="minForPlace' + place.id + '"></span><span class="stats-delimiter">,</span><span class="stats-label">'
-            + 'max =</span><span class="stats-value"' + ' id="maxForPlace' + place.id + '"></span><span class="stats-delimiter">,</span><span'
-            + ' class="stats-label">avg =</span><span' + ' class="stats-value decimal-value" id="avgForPlace' + place.id + '"></span></div>');
-    }
-    $stats.append('<div class="stats-title">Transitions (qty of active channels):</div>');
-    for (var k = 0; k < net.transitions.length; k++) {
-        var transition = net.transitions[k];
-        $stats.append('<div class="stats-line"><span class="stats-line-title">' + transition.name + '</span><span class="stats-label">min =</span>'
-            + '<span class="stats-value" id="minForTransition' + transition.id + '"></span><span class="stats-delimiter">,</span><span class="stats-label">'
-            + 'max =</span><span class="stats-value"' + ' id="maxForTransition' + transition.id + '"></span><span class="stats-delimiter">,</span><span'
-            + ' class="stats-label">avg =</span><span class="stats-value decimal-value" ' + 'id="avgForTransition' + transition.id + '"></span></div>');
-    }
-    $('span.stats-line-title').each(function () {
-        $(this).attr('title', $(this).text());
+
+    $stats.append(`
+        <div class="h6 py-3">Places (qty of markers):</div>
+        <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Min</th>
+                <th scope="col">Max</th>
+                <th scope="col">Avg</th>
+            </tr>
+        </thead>
+        <tbody id="stats-places-table"></tbody>
+    </table>`);
+
+    net.places.forEach(place => {
+        $('#stats-places-table').append(`
+            <tr>
+                <th scope="row">${place.name}</th>
+                <td id="min-place-${place.id}"></td>
+                <td id="max-place-${place.id}"></td>
+                <td id="avg-place-${place.id}"></td>
+            </tr>`);
+    });
+
+    $stats.append(`
+        <div class="h6 py-3">Transitions (qty of active channels):</div>
+        <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Min</th>
+                <th scope="col">Max</th>
+                <th scope="col">Avg</th>
+            </tr>
+        </thead>
+        <tbody id="stats-transitions-table"></tbody>
+    </table>`);
+
+    net.transitions.forEach(transition => {
+        $('#stats-transitions-table').append(`
+            <tr>
+                <th scope="row">${transition.name}</th>
+                <td id="min-transition-${transition.id}"></td>
+                <td id="max-transition-${transition.id}"></td>
+                <td id="avg-transition-${transition.id}"></td>
+            </tr>`);
     });
 }
 
@@ -63,9 +92,9 @@ function updateStatsForTransitions(displayChanges, isLastUpdate, prevTime, nextT
             }
         }
         if (displayChanges) {
-            $('#minForTransition' + transition.id).text(transition.stats.min);
-            $('#maxForTransition' + transition.id).text(transition.stats.max);
-            $('#avgForTransition' + transition.id).text(transition.stats.avg.toFixed(2));
+            $(`#min-transition-${transition.id}`).text(transition.stats.min);
+            $(`#max-transition-${transition.id}`).text(transition.stats.max);
+            $(`#avg-transition-${transition.id}`).text(transition.stats.avg.toFixed(2));
         }
     }
 }
@@ -91,9 +120,9 @@ function updateStatsForPlaces(displayChanges, isLastUpdate, prevTime, nextTime) 
             }
         }
         if (displayChanges) {
-            $('#minForPlace' + place.id).text(place.stats.min);
-            $('#maxForPlace' + place.id).text(place.stats.max);
-            $('#avgForPlace' + place.id).text(place.stats.avg.toFixed(2));
+            $(`#min-place-${place.id}`).text(place.stats.min);
+            $(`#max-place-${place.id}`).text(place.stats.max);
+            $(`#avg-place-${place.id}`).text(place.stats.avg.toFixed(2));
         }
     }
 }
@@ -137,7 +166,7 @@ function animate(place, transition, fromPlace, callback) {
     $('.sandbox').append('<div class="marker animation-marker" id="animationMarker' + markerId + '" style="left: ' + fromPosition.left
         + 'px; top: ' + fromPosition.top + 'px"></div>');
     var $marker = $('#animationMarker' + markerId);
-    $marker.animate({'left': toPosition.left + 'px', 'top': toPosition.top + 'px'}, animationDuration, function () {
+    $marker.animate({ 'left': toPosition.left + 'px', 'top': toPosition.top + 'px' }, animationDuration, function () {
         $marker.remove();
         callback();
     });
@@ -220,7 +249,7 @@ function performSimpleTokensInput(withAnimation) {
             })[0];
             place.markers -= arc.channels;
             if (withAnimation && firedTransitions.indexOf(transition) === -1) {
-                tokensInputResult.push({place: place, transition: transition});
+                tokensInputResult.push({ place: place, transition: transition });
             }
         }
         transition.outputTimesBuffer.push(currentTime + transition.getExecutionTime());
@@ -323,24 +352,25 @@ function performTokensOutput(deferred) {
 
 function performFinalActions() {
     var endTime = (new Date()).getTime();
-    if (!withAnimation) {
-        prepareStatsArea();
-    }
+    if (!withAnimation) prepareStatsArea();
+
     updateStatsForPlaces(true, true, currentTime, nextTime);
     updateStatsForTransitions(true, true, currentTime, nextTime);
     finalizeStats();
-    for (var k = 0; k < net.places.length; k++) {
-        net.places[k].stats = undefined;
-        net.places[k].redraw();
-    }
-    for (var k = 0; k < net.transitions.length; k++) {
-        net.transitions[k].stats = undefined;
-        var buffer = net.transitions[k].outputTimesBuffer;
-        for (var g = 0; g < buffer.length; g++) {
-            buffer[g] -= currentTime;
-        }
-    }
-    $('.stats').append('<div class="stats-title">Time elapsed: ' + getTimeString(endTime - startTime) + '</div>');
+
+    net.places.forEach(e => {
+        e.stats = undefined;
+        e.redraw();
+    });
+
+    net.transitions.forEach(e => {
+        e.stats = undefined;
+        e.outputTimesBuffer = e.outputTimesBuffer.map(e => e -= currentTime);
+    });
+
+    $('#stats').append(`<div class="h6 py-3">
+        Time elapsed: <span class="font-weight-light">${getTimeString(endTime - startTime)}</span>
+    </div>`);
     $('.btn-disabled').removeClass('btn-disabled');
 }
 
@@ -437,14 +467,19 @@ function runSimulationForNet(currentNet) {
 
     $(withAnimation ? 'button:not(#stop-btn)' : 'button').addClass('btn-disabled');
 
-    $('.stats').html('');
+    $('#stats').html('');
 
     if (withAnimation) {
         prepareStatsArea();
         startTime = (new Date()).getTime();
         makeStepWithAnimation();
     } else {
-        $('.stats').html('<div class="stats-title no-underline">Simulation in progress. Please wait...</div>');
+        $('#stats').html(`
+            <div class="col text-center pt-5">
+                <div class="spinner-border" role="status"></div>
+                <div class="py-2">Loading...</div>
+            </div>
+        `);
         startTime = (new Date()).getTime();
         setTimeout(makeSteps, 0);
     }
