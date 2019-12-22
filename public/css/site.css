@@ -126,14 +126,3 @@ span.stats-line-title, span.stats-value, span.stats-label, span.stats-delimiter 
 span.ready-value {
     margin-left: 2px;
 }
-
-.area-title {
-    font-size: 14px;
-    text-align: center;
-    padding-bottom: 4px;
-    margin: 0 15px 4px 15px;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    border-bottom: 2px solid black;
-    margin-bottom: 14px;
-}
